@@ -2,9 +2,21 @@
 
 UMD customizations to the stock ArchvesSpace
 ([https://archivesspace.org/](https://archivesspace.org/))
-application.
+application, and provides Dockerfiles for creating the Docker images used by the
+[umd-lib/k8s-aspace](https://github.com/umd-lib/k8s-aspace) Kubernetes
+configuration.
 
-Also includes Dockerfiles for creating the Docker images used by Kubernetes.
+This repository is intended to replace:
+
+* [umd-lib/aspace-docker](https://github.com/umd-lib/aspace-docker)
+* [https://bitbucket.org/umd-lib/aspace-env](https://bitbucket.org/umd-lib/aspace-env)
+
+## Dockerfiles
+
+* Dockerfile - The Dockerfile for creating the UMD-customized ArchivesSpace
+Docker image
+* Dockerfile-solr - The Dockerfile for creating the Solr instance to use with
+ArchivesSpace
 
 ## Directories
 
