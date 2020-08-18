@@ -243,8 +243,8 @@ AppConfig[:demo_db_backup_number_to_keep] = 7
 ## If you are serving user-facing applications via proxy
 ## (i.e., another domain or port, or via https, or for a prefix) it is
 ## recommended that you record those URLs in your configuration
-AppConfig[:frontend_proxy_url] = "https://#{ENV['SERVER_NAME']}"
-AppConfig[:public_proxy_url] = "https://#{ENV['PUBLIC_SERVER_NAME']}"
+AppConfig[:frontend_proxy_url] = "https://#{ENV['STAFF_INTERFACE_PROXY_URL']}"
+AppConfig[:public_proxy_url] = "https://#{ENV['PUBLIC_INTERFACE_PROXY_URL']}"
 #
 ## Don't override _prefix or _proxy_prefix unless you know what you're doing
 #AppConfig[:frontend_proxy_prefix] = proc { "#{URI(AppConfig[:frontend_proxy_url]).path}/".gsub(%r{/+$}, "/") }
@@ -706,7 +706,7 @@ AppConfig[:pui_page_actions_request] = false
 ## Specifies if the fields that show up in csv should be limited to those in search results
 #AppConfig[:limit_csv_fields] = true
 # by default we go to fedoradev unless we're on stage or prod.
-AppConfig[:umd_handle_server_url] = case AppConfig[:backend_url] 
+AppConfig[:umd_handle_server_url] = case AppConfig[:backend_url]
 when /aspacestage.lib.umd.edu/
   "https://fedorastage.lib.umd.edu/handle/"
 when /aspace.lib.umd.edu/
@@ -715,7 +715,7 @@ else
   "https://fedoradev.lib.umd.edu/handle/"
 end
 
-# Handles will be minted with the PUI Url to a resource and its PID. 
+# Handles will be minted with the PUI Url to a resource and its PID.
 # A pid is the resource's identifier, with this namespace prefix
 AppConfig[:umd_handle_namespace] = "archives"
 
