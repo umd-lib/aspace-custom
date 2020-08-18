@@ -49,8 +49,7 @@ USER aspace
 
 RUN cd /apps/aspace && \
     chmod u+x archivesspace/docker-startup.sh && \
-    scripts/plugins.sh && \
-    scripts/append_log.sh
+    scripts/plugins.sh
 
 # See archivesspace/config/config.rb for list of ports to export
 EXPOSE 8080 8081 8083
