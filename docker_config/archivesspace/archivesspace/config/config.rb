@@ -243,8 +243,8 @@ AppConfig[:demo_db_backup_number_to_keep] = 7
 ## If you are serving user-facing applications via proxy
 ## (i.e., another domain or port, or via https, or for a prefix) it is
 ## recommended that you record those URLs in your configuration
-AppConfig[:frontend_proxy_url] = "https://#{ENV['STAFF_INTERFACE_PROXY_URL']}"
-AppConfig[:public_proxy_url] = "https://#{ENV['PUBLIC_INTERFACE_PROXY_URL']}"
+AppConfig[:frontend_proxy_url] = "#{ENV['STAFF_INTERFACE_PROXY_URL']}"
+AppConfig[:public_proxy_url] = "#{ENV['PUBLIC_INTERFACE_PROXY_URL']}"
 #
 ## Don't override _prefix or _proxy_prefix unless you know what you're doing
 #AppConfig[:frontend_proxy_prefix] = proc { "#{URI(AppConfig[:frontend_proxy_url]).path}/".gsub(%r{/+$}, "/") }
