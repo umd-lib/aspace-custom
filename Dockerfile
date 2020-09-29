@@ -8,15 +8,16 @@
 
 # This Dockerfile is largely taken from
 # https://github.com/archivesspace/archivesspace/blob/v2.7.1/Dockerfile
+# and https://github.com/dartmouth-dltg/aspace-docker
+FROM openjdk:8u265-jre
 
-FROM ubuntu:18.04 as build_release
+ENV LANG=C.UTF-8
+
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update && \
     apt-get -y install --no-install-recommends \
-      build-essential \
       git \
-      openjdk-8-jre-headless \
       wget \
       unzip && \
       rm -rf /var/lib/apt/lists/*
