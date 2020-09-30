@@ -17,6 +17,10 @@ This repository is intended to replace:
 Docker image
 * Dockerfile-solr - The Dockerfile for creating the Solr instance to use with
 ArchivesSpace
+* Dockerfile-api-proxy - The Dockerfile for creating an Nginx reverse proxy for
+protecting the ArchivesSpace API from anonymous access.
+
+ArchivesSpace
 
 ## Directories
 
@@ -51,3 +55,8 @@ plugins specified in the "archivesspace/config/config.rb" file.
 ### docker_config/solr/
 
 Files/directories used to configure the ArchivesSpace Solr Docker image.
+
+### docker_config/api-proxy/
+
+Contains the Nginx configuration file for reverse proxy that protects the
+ArchivesSpace API endpoints from anonymous access.
