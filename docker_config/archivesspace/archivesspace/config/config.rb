@@ -705,15 +705,14 @@ AppConfig[:pui_page_actions_request] = false
 #
 ## Specifies if the fields that show up in csv should be limited to those in search results
 #AppConfig[:limit_csv_fields] = true
-# by default we go to fedoradev unless we're on stage or prod.
-AppConfig[:umd_handle_server_url] = case AppConfig[:backend_url]
-when /aspacestage.lib.umd.edu/
-  "https://fedorastage.lib.umd.edu/handle/"
-when /aspace.lib.umd.edu/
-  "https://fedora.lib.umd.edu/handle/"
-else
-  "https://fedoradev.lib.umd.edu/handle/"
-end
+
+# Use UMD_HANDLE_SERVER_URL environment variable for handle server, or default
+# to fedoradev if not defined
+AppConfig[:umd_handle_server_url] = if ENV['UMD_HANDLE_SERVER_URL']
+                                      ENV['UMD_HANDLE_SERVER_URL']
+                                    else
+                                      "https://fedoradev.lib.umd.edu/handle/"
+                                    end
 
 # Handles will be minted with the PUI Url to a resource and its PID.
 # A pid is the resource's identifier, with this namespace prefix
