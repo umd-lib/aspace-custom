@@ -706,17 +706,11 @@ AppConfig[:pui_page_actions_request] = false
 ## Specifies if the fields that show up in csv should be limited to those in search results
 #AppConfig[:limit_csv_fields] = true
 
-# Use UMD_HANDLE_SERVER_URL environment variable for handle server, or default
-# to fedoradev if not defined
-AppConfig[:umd_handle_server_url] = if ENV['UMD_HANDLE_SERVER_URL']
-                                      ENV['UMD_HANDLE_SERVER_URL']
-                                    else
-                                      "https://fedoradev.lib.umd.edu/handle/"
-                                    end
-
-# Handles will be minted with the PUI Url to a resource and its PID.
-# A pid is the resource's identifier, with this namespace prefix
-AppConfig[:umd_handle_namespace] = "archives"
+# umd-handle service environment variables
+AppConfig[:umd_handle_server_url] = ENV['UMD_HANDLE_SERVER_URL']
+AppConfig[:umd_handle_jwt_token] = ENV['UMD_HANDLE_JWT_TOKEN']
+AppConfig[:umd_handle_prefix] = '1903.1'
+AppConfig[:umd_handle_repo] = 'aspace'
 
 AppConfig[:resequence_on_startup] = false # JAW 2015-01-09 set to true for upgrade; false for normal restarts
 
