@@ -99,7 +99,7 @@ AppConfig[:solr_url] = ENV['ASPACE_SOLR_URL']
 #
 ## Plug-ins to load. They will load in the order specified
 AppConfig[:plugins] = ['local', 'aspace_feedback', 'lcnaf', 'payments_module',
-                       'aspace-search-identifier', 'aspace-oauth',
+                       'aspace-oauth',
                        'aspace_yale_accessions', 'default_text_for_notes',
                        'and_search', 'digitization_work_order',
                        'umd-lib-aspace-theme', 'aspace-import-excel']
