@@ -6,15 +6,19 @@
 #
 # where <VERSION> is the Docker image version to create.
 
-FROM solr:6.6.4-alpine
+FROM solr:8.8.2-slim
 
 # Create Solr core for ArchivesSpace
 
 ARG SOLR_DIR=/opt/solr
 ENV SOLR_DIR=${SOLR_DIR}
 
-RUN cp -r ${SOLR_DIR}/server/solr/configsets/basic_configs ${SOLR_DIR}/server/solr/configsets/archivesspace && \
+USER root
+
+RUN cp -pr ${SOLR_DIR}/server/solr/configsets/_default ${SOLR_DIR}/server/solr/configsets/archivesspace && \
     rm ${SOLR_DIR}/server/solr/configsets/archivesspace/conf/managed-schema
+
+USER solr
 
 COPY docker_config/solr/conf/* ${SOLR_DIR}/server/solr/configsets/archivesspace/conf/
 

@@ -7,7 +7,7 @@
 # where <VERSION> is the Docker image version to create.
 
 # This Dockerfile is largely taken from
-# https://github.com/archivesspace/archivesspace/blob/v2.7.1/Dockerfile
+# https://github.com/archivesspace/archivesspace/blob/v3.1.0/Dockerfile
 # and https://github.com/dartmouth-dltg/aspace-docker
 FROM openjdk:8u265-jre
 
@@ -24,7 +24,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 
 RUN mkdir -p /apps/aspace && \
     cd /apps/aspace && \
-    wget https://github.com/archivesspace/archivesspace/releases/download/v2.7.1/archivesspace-v2.7.1.zip -O archivesspace.zip && \
+    wget https://github.com/archivesspace/archivesspace/releases/download/v3.1.0/archivesspace-v3.1.0.zip -O archivesspace.zip && \
     unzip archivesspace.zip && \
     cd /apps/aspace/archivesspace && \
     wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar -O mysql-connector-java-5.1.39.jar && \
