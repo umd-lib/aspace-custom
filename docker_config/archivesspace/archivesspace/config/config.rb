@@ -102,7 +102,7 @@ AppConfig[:plugins] = ['local', 'aspace_feedback', 'lcnaf', 'payments_module',
                        'aspace-oauth',
                        'aspace_yale_accessions', 'default_text_for_notes',
                        'and_search', 'digitization_work_order',
-                       'umd-lib-aspace-theme', 'aspace-import-excel']
+                       'umd-lib-aspace-theme']
 
 unless ENV['DISABLE_AEON_REQUEST'] == 'true'
   AppConfig[:plugins] << 'aeon_fulfillment' << 'umd_aeon_fulfillment'
