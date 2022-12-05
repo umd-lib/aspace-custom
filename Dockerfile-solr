@@ -10,7 +10,7 @@
 # "archivesspace/solr/Dockerfile" for the given version. For example, for
 # ArchivesSpace v3.3.1:
 #
-# https://github.com/archivesspace/archivesspace/tree/v3.3.1/solr
+# https://github.com/archivesspace/archivesspace/blob/v3.3.1/solr/Dockerfile
 
 FROM solr:8.10-slim
 
