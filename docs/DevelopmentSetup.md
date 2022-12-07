@@ -183,7 +183,7 @@ AppConfig[:public_theme] = 'umd-lib-aspace-theme'
 unless ENV['DISABLE_AEON_REQUEST'] == 'true'
   AppConfig[:plugins] << 'aeon_fulfillment' << 'umd_aeon_fulfillment'
   AppConfig[:aeon_fulfillment] = {
-    'test' => {
+    'umd_test' => {
       requests_permitted_for_containers_only: true,
       aeon_web_url: 'https://aeon.lib.umd.edu/logon/',
       aeon_return_link_label: 'UMD Archives',
@@ -202,9 +202,10 @@ AppConfig[:pui_hide][:search_tab] = true
 ```
 
 This sets the "theme" to use the "umd-lib-aspace-theme" plugin, configures the
-"aeon_fulfillment" plugin for the "TEST" repository (created below), and hides
-some of the navigation bar items. To match what is configured on the servers,
-see <https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>.
+"aeon_fulfillment" plugin for the "UMD_TEST" repository (created below), and
+hides some of the navigation bar items. To match what is configured on the
+servers, see
+<https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>.
 
 2.5) In the terminal where the "public" front-end is running ("term3" from the
 steps above), stop the application using "Ctrl-C", and build/run it again:
@@ -222,3 +223,66 @@ the "umd-lib-aspace-theme" plugin.
 At least for the "umd-lib-aspace-theme" plugin, changes can be made directly in
 the "plugins/umd-lib-aspace-theme" directories, and ArchivesSpace will
 immediately pick up the changes without having to be restarted.
+
+## 3. Sample Data
+
+### Loading Sample Data
+
+3.1) Download the attached EAD files:
+
+* [0251.UA_20181203_205932_UTC__ead.xml](resources/ead/0251.UA_20181203_205932_UTC__ead.xml)
+* [0073.LIT_20171121_141039_UTC__ead.xml](resources/ead/0073.LIT_20171121_141039_UTC__ead.xml)
+* [0057.LIT_20171121_135754_UTC__ead.xml](resources/ead/0057.LIT_20171121_135754_UTC__ead.xml)
+
+3.2) Log in to the front-end staff interface (<http://localhost:3000/>).
+
+3.3) Create a new repository by selecting "System | Manage Repositories" in the
+navigation bar, and then left-clicking the "Create Repository" button in the
+resulting page. The "New Repository" form will be displayed.
+
+3.4) On the "New Repository" form, fill out the following fields:
+
+| Field                 | Value |
+| ----------------------| ----- |
+| Repository Short Name | UMD_TEST |
+| Repository Name       | UMD Test Repository |
+| Publish?              | \<Checked> |
+
+then left-click the "Save Repository" button. The page should refresh indicating
+that the repository was created.
+
+3.5) In the navigation bar, left-click the "Select Repository" drop-down, select
+the "UMD_TEST" repository, and left-click the "Select Repository" button. The
+page will refresh and indicate that the "UMD_TEST" repository is now active.
+
+3.6) In the application menubar, select "Create | Background Job | Import Data".
+The "New Background Job - Import Data" form will be displayed.
+
+3.7) In the "New Background Job - Import Data" form, select "EAD" in the
+"Import Type" dropdown. Then, using the "Add file" button, select the EAD files
+that were downloaded in Step 3.1. Left-click the "Start Job" button.
+The "Import Job" page will be displayed.
+
+3.8) Once the job has completed, go to the front-end public interface
+(<http://localhost:3001/>). Left-click the "Libraries" link on the
+application home page. The resulting page should display the
+"UMD Test Repository", and indicate that it has 3 collections.
+
+### Destroying Sample Data
+
+---
+
+**WARNING** This command will destroy all the data, so should obviously only be
+run on development systems that aren't connected to an actual database.
+
+---
+
+From <https://archivesspace.github.io/tech-docs/development/dev.html>:
+
+> There is a task for resetting the database:
+>
+> ```bash
+> $ ./build/run db:nuke
+> ```
+>
+> Which will first delete then migrate the database.
