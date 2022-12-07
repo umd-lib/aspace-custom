@@ -11,6 +11,10 @@ This repository is intended to replace:
 * [umd-lib/aspace-docker](https://github.com/umd-lib/aspace-docker)
 * [https://bitbucket.org/umd-lib/aspace-env](https://bitbucket.org/umd-lib/aspace-env)
 
+## Development Setup
+
+See [docs/DevelopmentSetup.md](docs/DevelopmentSetup.md).
+
 ## Dockerfiles
 
 * Dockerfile - The Dockerfile for creating the UMD-customized ArchivesSpace
