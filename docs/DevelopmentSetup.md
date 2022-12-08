@@ -51,7 +51,7 @@ $ docker-compose -f docker-compose-dev.yml build
 $ docker-compose -f docker-compose-dev.yml up --detach
 ```
 
-1.6) Download the MySQL connection:
+1.6) Download the MySQL connector:
 
 ```bash
 $ cd ./common/lib && wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.23/mysql-connector-java-8.0.23.jar && cd -
@@ -87,6 +87,21 @@ java version "1.8.0_301"
 Java(TM) SE Runtime Environment (build 1.8.0_301-b09)
 Java HotSpot(TM) 64-Bit Server VM (build 25.301-b09, mixed mode)
 ```
+
+---
+
+---
+
+**Note:** This command will occasionally fail with an error message similar to:
+
+```text
+     [java] NameError: uninitialized constant Gem::Installer::FileUtils
+     [java] An error occurred while installing clipboard-rails (1.7.1), and Bundler cannot
+     [java] continue.
+```
+
+It is unclear why this error occurs, but it appears to be intermittent, and
+re-running the command will usually work (may take several tries).
 
 ---
 
