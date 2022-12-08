@@ -226,21 +226,21 @@ immediately pick up the changes without having to be restarted.
 
 ## 3. Sample Data
 
-### Loading Sample Data
+### Loading EAD Sample Data
 
-3.1) Download the attached EAD files:
+Sample data files are in the "docs/resources/ead" folder:
 
-* [0251.UA_20181203_205932_UTC__ead.xml](resources/ead/0251.UA_20181203_205932_UTC__ead.xml)
-* [0073.LIT_20171121_141039_UTC__ead.xml](resources/ead/0073.LIT_20171121_141039_UTC__ead.xml)
-* [0057.LIT_20171121_135754_UTC__ead.xml](resources/ead/0057.LIT_20171121_135754_UTC__ead.xml)
+* 0251.UA_20181203_205932_UTC__ead.xml
+* 0073.LIT_20171121_141039_UTC__ead.xml
+* 0057.LIT_20171121_135754_UTC__ead.xml
 
-3.2) Log in to the front-end staff interface (<http://localhost:3000/>).
+3.1) Log in to the front-end staff interface (<http://localhost:3000/>).
 
-3.3) Create a new repository by selecting "System | Manage Repositories" in the
+3.2) Create a new repository by selecting "System | Manage Repositories" in the
 navigation bar, and then left-clicking the "Create Repository" button in the
 resulting page. The "New Repository" form will be displayed.
 
-3.4) On the "New Repository" form, fill out the following fields:
+3.3) On the "New Repository" form, fill out the following fields:
 
 | Field                 | Value |
 | ----------------------| ----- |
@@ -251,19 +251,19 @@ resulting page. The "New Repository" form will be displayed.
 then left-click the "Save Repository" button. The page should refresh indicating
 that the repository was created.
 
-3.5) In the navigation bar, left-click the "Select Repository" drop-down, select
+3.4) In the navigation bar, left-click the "Select Repository" drop-down, select
 the "UMD_TEST" repository, and left-click the "Select Repository" button. The
 page will refresh and indicate that the "UMD_TEST" repository is now active.
 
-3.6) In the application menubar, select "Create | Background Job | Import Data".
+3.5) In the application menubar, select "Create | Background Job | Import Data".
 The "New Background Job - Import Data" form will be displayed.
 
-3.7) In the "New Background Job - Import Data" form, select "EAD" in the
+3.6) In the "New Background Job - Import Data" form, select "EAD" in the
 "Import Type" dropdown. Then, using the "Add file" button, select the EAD files
-that were downloaded in Step 3.1. Left-click the "Start Job" button.
-The "Import Job" page will be displayed.
+to upload. Left-click the "Start Job" button. The "Import Job" page will be
+displayed.
 
-3.8) Once the job has completed, go to the front-end public interface
+3.7) Once the job has completed, go to the front-end public interface
 (<http://localhost:3001/>). Left-click the "Libraries" link on the
 application home page. The resulting page should display the
 "UMD Test Repository", and indicate that it has 3 collections.
