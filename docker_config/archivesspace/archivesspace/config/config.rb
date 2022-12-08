@@ -37,8 +37,7 @@ AppConfig[:public_url] = "http://#{ENV['SERVER_NAME']}:8081"
 ## set it to something else below.
 #AppConfig[:oai_url] = "http://localhost:8082"
 #
-## The ArchivesSpace Solr index listens on port 8090 by default.  You can
-## set it to something else below.
+## The ArchivesSpace Solr index url default.  You can set it to something else below.
 AppConfig[:solr_url] = ENV['ASPACE_SOLR_URL']
 #
 ## The ArchivesSpace indexer listens on port 8091 by default.  You can
@@ -76,9 +75,11 @@ AppConfig[:solr_url] = ENV['ASPACE_SOLR_URL']
 ## By default, Solr backups will run at midnight.  See https://crontab.guru/ for
 ## information about the schedule syntax.
 #AppConfig[:solr_backup_schedule] = "0 0 * * *"
-#AppConfig[:solr_backup_number_to_keep] = 1
+## By default no backups. If enabling (by setting > 0) then you must also ensure
+## that AppConfig[:solr_index_directory] is set to the correct path
+#AppConfig[:solr_backup_number_to_keep] = 0
 #AppConfig[:solr_backup_directory] = proc { File.join(AppConfig[:data_directory], "solr_backups") }
-## add default solr params, i.e. use AND for search: AppConfig[:solr_params] = { "mm" => "AND" }
+## add default solr params, i.e. use AND for search: AppConfig[:solr_params] = { 'mm' => '100%' }
 ## Another example below sets the boost query value (bq) to boost the relevancy for the query string in the title,
 ## sets the phrase fields parameter (pf) to boost the relevancy for the title when the query terms are in close proximity to
 ## each other, and sets the phrase slop (ps) parameter for the pf parameter to indicate how close the proximity should be
@@ -90,7 +91,8 @@ AppConfig[:solr_url] = ENV['ASPACE_SOLR_URL']
 ## For more information about solr parameters, please consult the solr documentation
 ## here: https://lucene.apache.org/solr/
 ## Configuring search operator to be AND by default - ANW-427
-#AppConfig[:solr_params] = { "q.op" => "AND" }
+#AppConfig[:solr_params] = { 'q.op' => 'AND' }
+#AppConfig[:solr_verify_checksums] = true
 #
 ## Set the application's language (see the .yml files in
 ## https://github.com/archivesspace/archivesspace/tree/master/common/locales for
@@ -177,12 +179,15 @@ AppConfig[:plugins] <<  "aspace-umd-lib-handle-service"
 #AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")
 #
 AppConfig[:backup_directory] = proc { File.join(AppConfig[:data_directory], "db_backups") }
-#AppConfig[:solr_index_directory] = proc { File.join(AppConfig[:data_directory], "solr_index") }
-#AppConfig[:solr_home_directory] = proc { File.join(AppConfig[:data_directory], "solr_home") }
+## Set the path to the solr index for the external Solr instance.
+## This setting is used by the solr backups configuration but only
+## applies if the solr index directory is accessible to ArchivesSpace.
+#AppConfig[:solr_index_directory] = File.join('', 'var', 'solr', 'data', 'archivesspace', 'data')
 AppConfig[:solr_indexing_frequency_seconds] = 120
 #AppConfig[:solr_facet_limit] = 100
 #
 #AppConfig[:default_page_size] = 10
+#AppConfig[:max_boolean_queries] = 1024 # ArchivesSpace Solr default
 #AppConfig[:max_page_size] = 250
 #
 ## An option to change the length of the abstracts on the collections overview page
@@ -258,7 +263,6 @@ AppConfig[:public_proxy_url] = "#{ENV['PUBLIC_INTERFACE_PROXY_URL']}"
 #AppConfig[:enable_backend] = true
 #AppConfig[:enable_frontend] = true
 #AppConfig[:enable_public] = true
-AppConfig[:enable_solr] = (ENV['ASPACE_EXTERNAL_SOLR'] != 'true')
 #AppConfig[:enable_indexer] = true
 #AppConfig[:enable_docs] = true
 #AppConfig[:enable_oai] = true
@@ -337,6 +341,10 @@ AppConfig[:authentication_sources] = [
 #AppConfig[:report_pdf_font_paths] = proc { ["#{AppConfig[:backend_url]}/reports/static/fonts/dejavu/DejaVuSans.ttf"] }
 #AppConfig[:report_pdf_font_family] = "\"DejaVu Sans\", sans-serif"
 #
+## option to enable custom reports
+## USE WITH CAUTION - running custom reports that are too complex may cause ASpace to crash
+#AppConfig[:enable_custom_reports] = false
+#
 ## Path to system Java -- required when creating PDFs on Windows
 #AppConfig[:path_to_java] = "java"
 #
@@ -389,7 +397,9 @@ AppConfig[:authentication_sources] = [
 ## Expose external ids in the frontend
 #AppConfig[:show_external_ids] = false
 #
-##
+## Whether to display archival record identifiers in the frontend largetree container
+#Setting temporarily disabled
+#
 ## This sets the allowed size of the request/response header that Jetty will accept (
 ## anything bigger gets a 403 error ). Note if you want to jack this size up,
 ## you will also have to configure your Nginx/Apache  as well if
@@ -525,6 +535,10 @@ AppConfig[:record_inheritance] = {
 #AppConfig[:pui_search_results_page_size] = 10
 #AppConfig[:pui_branding_img] = 'archivesspace.small.png'
 #AppConfig[:pui_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
+#
+#AppConfig[:frontend_branding_img] = 'archivesspace/archivesspace.small.png'
+#AppConfig[:frontend_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
+#
 #AppConfig[:pui_block_referrer] = true # patron privacy; blocks full 'referrer' when going outside the domain
 #
 ## The number of PDFs that can be generated (in the background) at the same time.
@@ -546,7 +560,7 @@ AppConfig[:pui_hide][:agents] = true
 AppConfig[:pui_hide][:classifications] = true
 AppConfig[:pui_hide][:search_tab] = true
 ## The following determine globally whether the various "badges" appear on the Repository page
-## can be overriden at repository level below (e.g.:  AppConfig[:pui_repos][{repo_code}][:hide][:counts] = true
+## can be overridden at repository level below (e.g.:  AppConfig[:pui_repos][{repo_code}][:hide][:counts] = true
 #AppConfig[:pui_hide][:resource_badge] = false
 #AppConfig[:pui_hide][:record_badge] = true # hide by default
 #AppConfig[:pui_hide][:digital_object_badge] = false
@@ -558,25 +572,26 @@ AppConfig[:pui_hide][:search_tab] = true
 ## The following determines globally whether the 'container inventory' navigation tab/pill is hidden on resource/collection page
 #AppConfig[:pui_hide][:container_inventory] = false
 #
-## Whether to display linked decaccessions
+## Whether to display linked deaccessions
 #AppConfig[:pui_display_deaccessions] = true
+#
+## Whether to display archival record identifiers in the PUI collection organization tree
+##Setting temporarily disabled
 #
 ##The number of characters to truncate before showing the 'Read More' link on notes
 #AppConfig[:pui_readmore_max_characters] = 450
+#
+## Whether to expand all additional information blocks at the bottom of record pages by default. `true` expands all blocks, `false` collapses all blocks.
+#AppConfig[:pui_expand_all] = true
 #
 ## Enable / disable PUI resource/archival object page actions
 #AppConfig[:pui_page_actions_cite] = true
 AppConfig[:pui_page_actions_request] = false
 #AppConfig[:pui_page_actions_print] = true
 #
-## Set default/active tab for PUI citation modal. If set to 'true' item citation
-## tab will be active by default; if 'false' item description tab will be active.
-## AppConfig[:pui_page_actions_cite] must be set to true for this to take effect.
-#AppConfig[:pui_active_citation_tab_item] = true
-#
 ## Enable / disable search-in-collection form in sidebar when viewing records
-# AppConfig[:pui_search_collection_from_archival_objects] = false
-# AppConfig[:pui_search_collection_from_collection_organization] = false
+#AppConfig[:pui_search_collection_from_archival_objects] = false
+#AppConfig[:pui_search_collection_from_collection_organization] = false
 #
 ## when a user is authenticated, add a link back to the staff interface from the specified record
 #AppConfig[:pui_enable_staff_link] = true
@@ -671,8 +686,7 @@ AppConfig[:pui_page_actions_request] = false
 ##   'erb_partial' => 'shared/my_special_action',
 ## }
 #
-## For Accessions browse set if accession date year filter values should be sorted ascending rather than descending (default)
-#AppConfig[:sort_accession_date_filter_asc] = false
+#AppConfig[:pui_display_facets_alpha] = false
 #
 ## Human-Readable URLs options
 ## use_human_readable_urls: determines whether fields and options related to human-readable URLs appear in the staff interface
@@ -696,6 +710,8 @@ AppConfig[:pui_page_actions_request] = false
 ## For archival objects: if this option and auto_generate_slugs_with_id are both enabled, then slugs for archival resources will be generated with Component Unique Identifier instead of the identifier.
 #AppConfig[:generate_archival_object_slugs_with_cuid] = false
 #
+## For Accessions browse set if accession date year filter values should be sorted ascending rather than descending (default)
+#AppConfig[:sort_accession_date_filter_asc] = false
 ## Determines if the subject source is shown along with the subject heading in records' subject listings
 ## This can help differentiate between subjects with the same heading
 #AppConfig[:show_source_in_subject_listing] = false
@@ -712,6 +728,34 @@ AppConfig[:pui_page_actions_request] = false
 ## In most cases this will be the same as the PUI URL.
 #AppConfig[:ark_url_prefix] = proc { AppConfig[:public_proxy_url] }
 #
+## The implementation of ArkMinter used to generate new ARKs.  See
+## `ark_minter.rb` for documentation on how to implement your own ARK minter.
+##
+## Out of the box, you can choose between:
+##
+##  :archivesspace_ark_minter -- ArchivesSpace ARK minter based on a numeric sequence.
+##
+##  :smithsonian_ark_minter -- An ARK minter, used by the Smithsonian
+##    Institution, based on random UUIDs.
+#AppConfig[:ark_minter] = :archivesspace_ark_minter
+#
+## Enables a field on each Repository record that is inserted after the NAAN in
+## each ARK generated.
+#AppConfig[:ark_enable_repository_shoulder] = false
+#
+## If set, this string is included to separate the ARK shoulder from the unique generated value.
+#AppConfig[:ark_shoulder_delimiter] = ''
+#
+## If true, adds a field to each Resource/Archival Object record that allows the
+## ARK URL to be manually set.
+#AppConfig[:arks_allow_external_arks] = true
+#
+## Specifies if the fields that show up in csv should be limited to those in search results
+#AppConfig[:limit_csv_fields] = true
+#
+## Use to specify the maximum number of columns to display when searching or browsing
+#AppConfig[:max_search_columns] = 7
+#
 ## For Bulk Import:
 ## specifies whether the "Load Digital Objects" button is available at the Resource Level
 #AppConfig[:hide_do_load] = false
@@ -719,8 +763,32 @@ AppConfig[:pui_page_actions_request] = false
 ## For Agents Export
 #AppConfig[:export_eac_agency_code] = false
 #
-## Specifies if the fields that show up in csv should be limited to those in search results
-#AppConfig[:limit_csv_fields] = true
+## Disable logged warnings when changing config settings that have already been set
+## This might be useful when running tests that need to fiddle with config
+#AppConfig[:disable_config_changed_warning] = false
+#
+## Resolving linked events can have a big impact on performance. If the number of linked
+## events surpasses the max then the events will not be resolved and a more abridged
+## record will be displayed to keep memory usage under control as the no. of events grows
+#AppConfig[:max_linked_events_to_resolve] = 100
+#
+## Prior to 3.2.0, multiple ARKs may have been created without
+## the user intending to do so. Setting this to true will make
+## database upgrade 158 attempt to clean up unwanted extra ARKs.
+## When multiple rows in the ARK table reference the same resource
+## or archival object, the first one created will be kept
+## and the rest discarded.
+## Use with caution and test thoroughly.
+#AppConfig[:prune_ark_name_table] = false
+#
+## If the PUI is enabled, add resource finding aid URLs to MARC exports
+#AppConfig[:include_pui_finding_aid_urls_in_marc_exports] = false
+#
+## If enabled, use slugs instead of URIs in finding aid links (856 $u)
+#AppConfig[:use_slug_finding_aid_urls_in_marc_exports] = false
+#
+## Turns on representative file version features - still in development
+#AppConfig[:enable_representative_file_version] = false
 
 # umd-handle service environment variables
 AppConfig[:umd_handle_server_url] = ENV['UMD_HANDLE_SERVER_URL']

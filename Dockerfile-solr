@@ -5,9 +5,14 @@
 # docker build -t docker.lib.umd.edu/aspace-solr:<VERSION> -f Dockerfile-solr .
 #
 # where <VERSION> is the Docker image version to create.
+#
+# When updating ArchivesSpace, the expected Solr version can be found in
+# "archivesspace/solr/Dockerfile" for the given version. For example, for
+# ArchivesSpace v3.3.1:
+#
+# https://github.com/archivesspace/archivesspace/blob/v3.3.1/solr/Dockerfile
 
-# Note: Pinning the solr image to this precise image hash to ensure the log4j CVE fix is included.
-FROM solr:8.8.2-slim@sha256:b1b2d60bf526eb0ded1ce079018fd59bb409dc941a7b232b2f61d136c998a495
+FROM solr:8.10-slim
 
 # Create Solr core for ArchivesSpace
 

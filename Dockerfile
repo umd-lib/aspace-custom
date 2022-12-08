@@ -24,7 +24,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 
 RUN mkdir -p /apps/aspace && \
     cd /apps/aspace && \
-    wget https://github.com/archivesspace/archivesspace/releases/download/v3.1.1/archivesspace-v3.1.1.zip -O archivesspace.zip && \
+    wget https://github.com/archivesspace/archivesspace/releases/download/v3.3.1/archivesspace-v3.3.1.zip -O archivesspace.zip && \
     unzip archivesspace.zip && \
     cd /apps/aspace/archivesspace && \
     wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar -O mysql-connector-java-5.1.39.jar && \
@@ -41,6 +41,9 @@ COPY docker_config/archivesspace/config /apps/aspace/config
 
 # Copy plugins customizations
 COPY docker_config/archivesspace/scripts /apps/aspace/scripts
+
+# # Copy Solr files into /apps/aspace/archivesspace/solr, for Solr checksum verification
+COPY docker_config/solr/conf /apps/aspace/archivesspace/solr
 
 RUN groupadd -g 1000 aspace && \
     useradd -l --create-home --uid 1000 --gid aspace aspace && \
