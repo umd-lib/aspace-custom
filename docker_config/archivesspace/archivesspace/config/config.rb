@@ -804,4 +804,16 @@ AppConfig[:migrate_to_container_management] = false
 AppConfig[:enable_jasper] = true
 AppConfig[:compile_jasper] = true
 
+# Fathom analytics configuration
+AppConfig[:fathom_analytics_data_site] = ENV['FATHOM_ANALYTICS_DATA_SITE']
+
+# Google Analytics configuation
 AppConfig[:public_google_analytics_code] = ENV['PUBLIC_GOOGLE_ANALYTICS_CODE']
+
+# Matomo analytics configuration
+AppConfig[:matomo_analytics_url] = ENV['MATOMO_ANALYTICS_URL']
+AppConfig[:matomo_analytics_site_id] = ENV['MATOMO_ANALYTICS_SITE_ID']
+
+# Plausible.io analytics configuration
+AppConfig[:plausible_io_analytics_data_domain] = ENV['PLAUSIBLE_IO_ANALYTICS_DATA_DOMAIN']
+
