@@ -343,8 +343,8 @@ AppConfig[:authentication_sources] = [
 #
 ## option to enable custom reports
 ## USE WITH CAUTION - running custom reports that are too complex may cause ASpace to crash
-#AppConfig[:enable_custom_reports] = false
-#
+AppConfig[:enable_custom_reports] = true
+
 ## Path to system Java -- required when creating PDFs on Windows
 #AppConfig[:path_to_java] = "java"
 #
