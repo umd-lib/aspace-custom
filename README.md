@@ -29,7 +29,7 @@ org.jruby.rack.RackInitializationException: Could not find public_suffix-4.0.6 i
 ```
 
 The workaround was to edit [docker_config/archivesspace/scripts/plugins.sh](docker_config/archivesspace/scripts/plugins.sh)
-script) so that the "public_suffix" and "addressable" gems that versions
+script) so that the "public_suffix" and "addressable" gems versions are
 compatible with the stock ArchivesSpace.
 
 As it is likely that the gem versions will slowly change over time, this script
@@ -45,11 +45,44 @@ and responses.
 * Dockerfile - The Dockerfile for creating the UMD-customized ArchivesSpace
 Docker image
 * Dockerfile-solr - The Dockerfile for creating the Solr instance to use with
-ArchivesSpace
+  ArchivesSpace
 * Dockerfile-api-proxy - The Dockerfile for creating an Nginx reverse proxy for
 protecting the ArchivesSpace API from anonymous access.
 
-ArchivesSpace
+## Docker Image Creation for Release
+
+The following steps use the Kubernetes "build" namespace to build the Docker
+images. This enables the steps to used with both newer Apple Silicon laptops and
+older Intel-based Apple laptops.
+
+For information about setting up the Kubernetes "build" namespace, see
+the "Docker Builds in Kuberetes" document in Confluence:
+
+<https://confluence.umd.edu/display/LIB/Docker+Builds+in+Kubernetes>
+
+1) Switch to the Kubernetes "build" namespace:
+
+```bash
+$ kubectl config use-context build
+```
+
+2) Build the Docker images, where \<TAG> is the Docker image tag to use:
+
+```bash
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:<TAG> -f Dockerfile .
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:<TAG> -f Dockerfile-api-proxy .
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:<TAG> -f Dockerfile-solr .
+```
+
+For example, to build all the images using "latest" as the image tag:
+
+```bash
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:latest -f Dockerfile .
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:latest -f Dockerfile-api-proxy .
+$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:latest -f Dockerfile-solr .
+```
+
+The images will be automatically pushed to the Nexus.
 
 ## Directories
 
