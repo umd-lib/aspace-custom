@@ -804,9 +804,6 @@ AppConfig[:migrate_to_container_management] = false
 AppConfig[:enable_jasper] = true
 AppConfig[:compile_jasper] = true
 
-# Google Analytics configuation
-AppConfig[:public_google_analytics_code] = ENV['PUBLIC_GOOGLE_ANALYTICS_CODE']
-
 # Matomo analytics configuration
 AppConfig[:matomo_analytics_url] = ENV['MATOMO_ANALYTICS_URL']
 AppConfig[:matomo_analytics_site_id] = ENV['MATOMO_ANALYTICS_SITE_ID']
