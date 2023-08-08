@@ -54,16 +54,16 @@ AppConfig[:solr_url] = ENV['ASPACE_SOLR_URL']
 ## value to a filepath that archivesspace has write access to.
 #AppConfig[:frontend_log] = "default"
 ## Log level for the frontend, values: (everything) debug, info, warn, error, fatal (severe only)
-#AppConfig[:frontend_log_level] = "debug"
+AppConfig[:frontend_log_level] = "info"
 ## Log level for the backend, values: (everything) debug, info, warn, error, fatal (severe only)
 #AppConfig[:backend_log] = "default"
-#AppConfig[:backend_log_level] = "debug"
+AppConfig[:backend_log_level] = "info"
 #
 #AppConfig[:pui_log] = "default"
-#AppConfig[:pui_log_level] = "debug"
+AppConfig[:pui_log_level] = "info"
 #
 #AppConfig[:indexer_log] = "default"
-#AppConfig[:indexer_log_level] = "debug"
+AppConfig[:indexer_log_level] = "info"
 #
 #
 ## Set to true to log all SQL statements.  Note that this will have a performance
