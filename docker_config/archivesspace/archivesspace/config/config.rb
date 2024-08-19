@@ -20,6 +20,7 @@ AppConfig[:db_url] = ENV['ASPACE_DB_URL']
 ## Set the maximum number of database connections used by the application.
 ## Default is derived from the number of indexer threads.
 #AppConfig[:db_max_connections] = proc { 20 + (AppConfig[:indexer_thread_count] * 2) }
+#AppConfig[:db_pool_timeout] = 5 # number of seconds to wait before raising a PoolTimeout error
 #
 ## The ArchivesSpace backend listens on port 8089 by default.  You can set it to
 ## something else below.
@@ -72,14 +73,7 @@ AppConfig[:indexer_log_level] = "info"
 ## Set to true if you have enabled MySQL binary logging
 #AppConfig[:mysql_binlog] = false
 #
-## By default, Solr backups will run at midnight.  See https://crontab.guru/ for
-## information about the schedule syntax.
-#AppConfig[:solr_backup_schedule] = "0 0 * * *"
-## By default no backups. If enabling (by setting > 0) then you must also ensure
-## that AppConfig[:solr_index_directory] is set to the correct path
-#AppConfig[:solr_backup_number_to_keep] = 0
-#AppConfig[:solr_backup_directory] = proc { File.join(AppConfig[:data_directory], "solr_backups") }
-## add default solr params, i.e. use AND for search: AppConfig[:solr_params] = { 'mm' => '100%' }
+## Add default solr params, i.e. use AND for search: AppConfig[:solr_params] = { 'mm' => '100%' }
 ## Another example below sets the boost query value (bq) to boost the relevancy for the query string in the title,
 ## sets the phrase fields parameter (pf) to boost the relevancy for the title when the query terms are in close proximity to
 ## each other, and sets the phrase slop (ps) parameter for the pf parameter to indicate how close the proximity should be
@@ -89,7 +83,7 @@ AppConfig[:indexer_log_level] = "info"
 ##      "ps" => 0,
 ##    }
 ## For more information about solr parameters, please consult the solr documentation
-## here: https://lucene.apache.org/solr/
+## here: https://solr.apache.org/guide/solr/latest/query-guide/dismax-query-parser.html
 ## Configuring search operator to be AND by default - ANW-427
 #AppConfig[:solr_params] = { 'q.op' => 'AND' }
 #AppConfig[:solr_verify_checksums] = true
@@ -136,33 +130,8 @@ AppConfig[:plugins] <<  "aspace-umd-lib-handle-service"
 #
 #AppConfig[:oai_proxy_url] = 'http://your-public-oai-url.example.com'
 #
-## DEPRECATED OAI Settings: Moved to database in ANW-674
-## NOTE: As of release 2.5.2, these settings should be set in the Staff User interface
-## To change these settings, select Manage OAI-PMH Settings from the System menu in the staff interface
-## These three settings are at the top of the page in the General Settings section
-## These settings will be removed from the config file completely when version 2.6.0 is released
-#AppConfig[:oai_admin_email] = 'admin@example.com'
-#AppConfig[:oai_record_prefix] = 'oai:archivesspace'
-#AppConfig[:oai_repository_name] = 'ArchivesSpace OAI Provider'
-#
-#
-## In addition to the sets based on level of description, you can define OAI Sets
-## based on repository codes and/or sponsors as follows
-##
-## AppConfig[:oai_sets] = {
-##   'repository_set' => {
-##     :repo_codes => ['hello626'],
-##     :description => "A set of one or more repositories",
-##   },
-##
-##   'sponsor_set' => {
-##     :sponsors => ['The_Sponsor'],
-##     :description => "A set of one or more sponsors",
-##   },
-## }
-#
 #AppConfig[:oai_ead_options] = {}
-## alternate example:  AppConfig[:oai_ead_options] = { :include_daos => true, :use_numbered_c_tags => true }
+## Example: AppConfig[:oai_ead_options] = { :include_daos => true, :use_numbered_c_tags => true, :include_uris => false }
 #
 ###
 ### Other less commonly changed settings are below
@@ -179,10 +148,7 @@ AppConfig[:plugins] <<  "aspace-umd-lib-handle-service"
 #AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")
 #
 AppConfig[:backup_directory] = proc { File.join(AppConfig[:data_directory], "db_backups") }
-## Set the path to the solr index for the external Solr instance.
-## This setting is used by the solr backups configuration but only
-## applies if the solr index directory is accessible to ArchivesSpace.
-#AppConfig[:solr_index_directory] = File.join('', 'var', 'solr', 'data', 'archivesspace', 'data')
+#
 AppConfig[:solr_indexing_frequency_seconds] = 120
 #AppConfig[:solr_facet_limit] = 100
 #
@@ -324,6 +290,8 @@ AppConfig[:authentication_sources] = [
         }
   }
 ]
+## When 'true' restrict authentication attempts to only the source already set for the user
+#AppConfig[:authentication_restricted_by_source] = false # default: allow any source
 #
 #AppConfig[:realtime_index_backlog_ms] = 60000
 #
@@ -344,7 +312,7 @@ AppConfig[:authentication_sources] = [
 ## option to enable custom reports
 ## USE WITH CAUTION - running custom reports that are too complex may cause ASpace to crash
 AppConfig[:enable_custom_reports] = true
-
+#
 ## Path to system Java -- required when creating PDFs on Windows
 #AppConfig[:path_to_java] = "java"
 #
@@ -398,7 +366,11 @@ AppConfig[:enable_custom_reports] = true
 #AppConfig[:show_external_ids] = false
 #
 ## Whether to display archival record identifiers in the frontend largetree container
-#Setting temporarily disabled
+#AppConfig[:display_identifiers_in_largetree_container] = false
+#
+## Allow mixed content in the title fields of resources, archival objects,
+## digital objects, digital object components, and accessions
+#AppConfig[:allow_mixed_content_title_fields] = false
 #
 ## This sets the allowed size of the request/response header that Jetty will accept (
 ## anything bigger gets a 403 error ). Note if you want to jack this size up,
@@ -418,7 +390,7 @@ AppConfig[:enable_custom_reports] = true
 ## Example:
 ## AppConfig[:container_management_barcode_length] = {:system_default => {:min => 5, :max => 10}, 'repo' => {:min => 9, :max => 12}, 'other_repo' => {:min => 9, :max => 9} }
 #
-## :container_management_extent_calculator globally defines the behavior of the exent calculator.
+## :container_management_extent_calculator globally defines the behavior of the extent calculator.
 ## Use :report_volume (true/false) to define whether space should be reported in cubic
 ## or linear dimensions.
 ## Use :unit (:feet, :inches, :meters, :centimeters) to define the unit which the calculator
@@ -533,10 +505,10 @@ AppConfig[:record_inheritance] = {
 ## TODO: Clean up configuration options
 #
 #AppConfig[:pui_search_results_page_size] = 10
-#AppConfig[:pui_branding_img] = 'archivesspace.small.png'
+#AppConfig[:pui_branding_img] = 'ArchivesSpaceLogo.svg'
 #AppConfig[:pui_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
 #
-#AppConfig[:frontend_branding_img] = 'archivesspace/archivesspace.small.png'
+#AppConfig[:frontend_branding_img] = 'archivesspace/ArchivesSpaceLogo.svg'
 #AppConfig[:frontend_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
 #
 #AppConfig[:pui_block_referrer] = true # patron privacy; blocks full 'referrer' when going outside the domain
@@ -576,7 +548,7 @@ AppConfig[:pui_hide][:search_tab] = true
 #AppConfig[:pui_display_deaccessions] = true
 #
 ## Whether to display archival record identifiers in the PUI collection organization tree
-##Setting temporarily disabled
+#AppConfig[:pui_display_identifiers_in_resource_tree] = false
 #
 ##The number of characters to truncate before showing the 'Read More' link on notes
 #AppConfig[:pui_readmore_max_characters] = 450
@@ -627,18 +599,18 @@ AppConfig[:pui_page_actions_request] = false
 #
 ## use the repository record email address for requests (overrides config email)
 #AppConfig[:pui_request_use_repo_email] = false
-#
+#AppConfig[:global_email_from_address] = "noreply@yourdomain.com"
 ## Example sendmail configuration:
-## AppConfig[:pui_email_delivery_method] = :sendmail
-## AppConfig[:pui_email_sendmail_settings] = {
+## AppConfig[:email_delivery_method] = :sendmail
+## AppConfig[:email_sendmail_settings] = {
 ##   location: '/usr/sbin/sendmail',
 ##   arguments: '-i'
 ## }
-##AppConfig[:pui_email_perform_deliveries] = true
-##AppConfig[:pui_email_raise_delivery_errors] = true
+##AppConfig[:email_perform_deliveries] = true
+##AppConfig[:email_raise_delivery_errors] = true
 ## Example SMTP configuration:
-##AppConfig[:pui_email_delivery_method] = :smtp
-##AppConfig[:pui_email_smtp_settings] = {
+##AppConfig[:email_delivery_method] = :smtp
+##AppConfig[:email_smtp_settings] = {
 ##      address:              'smtp.gmail.com',
 ##      port:                 587,
 ##      domain:               'gmail.com',
@@ -647,8 +619,9 @@ AppConfig[:pui_page_actions_request] = false
 ##      authentication:       'plain',
 ##      enable_starttls_auto: true,
 ##}
-##AppConfig[:pui_email_perform_deliveries] = true
-##AppConfig[:pui_email_raise_delivery_errors] = true
+##AppConfig[:email_perform_deliveries] = true
+##AppConfig[:email_raise_delivery_errors] = true
+#
 #
 ## Add page actions via the configuration
 #AppConfig[:pui_page_custom_actions] = []
@@ -787,9 +760,39 @@ AppConfig[:pui_page_actions_request] = false
 ## If enabled, use slugs instead of URIs in finding aid links (856 $u)
 #AppConfig[:use_slug_finding_aid_urls_in_marc_exports] = false
 #
-## Turns on representative file version features - still in development
-#AppConfig[:enable_representative_file_version] = false
-
+## Enables Language Selection in PUI
+#AppConfig[:allow_pui_language_selection] = true
+#
+## How repositories should be sorted in the PUI. Options are :display_string or :position
+#AppConfig[:pui_repositories_sort] = :display_string
+#
+## Set the font used to generate PDFs in the PUI
+#AppConfig[:pui_pdf_font_files] = ["KurintoText-Rg.ttf",
+#                                  "KurintoText-Bd.ttf",
+#                                  "KurintoText-It.ttf",
+#                                  "KurintoTextJP-Rg.ttf",
+#                                  "KurintoTextJP-Bd.ttf",
+#                                  "KurintoTextJP-It.ttf",
+#                                  "KurintoTextKR-Rg.ttf",
+#                                  "KurintoTextKR-Bd.ttf",
+#                                  "KurintoTextKR-It.ttf",
+#                                  "KurintoTextSC-Rg.ttf",
+#                                  "KurintoTextSC-Bd.ttf",
+#                                  "KurintoTextSC-It.ttf",
+#                                  "NotoSerif-Regular.ttf",
+#                                  "NotoSerif-Bold.ttf",
+#                                  "NotoSerif-Italic.ttf"]
+#
+#AppConfig[:pui_pdf_font_name] = "Kurinto Text,Kurinto Text JP,Kurinto Text KR,Kurinto Text SC,Noto Serif"
+#
+#
+#AppConfig[:pui_pdf_paragraph_line_height] = "125%"
+#AppConfig[:pui_pdf_title_line_height] = "140%"
+#
+## Password recovery - requires email configuration
+## See example email configuration above
+#AppConfig[:allow_password_reset] = false
+#
 # umd-handle service environment variables
 AppConfig[:umd_handle_server_url] = ENV['UMD_HANDLE_SERVER_URL']
 AppConfig[:umd_handle_jwt_token] = ENV['UMD_HANDLE_JWT_TOKEN']
