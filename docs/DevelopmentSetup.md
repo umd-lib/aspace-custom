@@ -33,10 +33,10 @@ $ cd archivesspace
 $ git checkout <VERSION_TAG>
 ```
 
-For example, to switch to v3.3.1, use:
+For example, to switch to v3.5.1, use:
 
 ```bash
-$ git checkout v3.3.1
+$ git checkout v3.5.1
 ```
 
 1.4) Retrieve the ArchivesSpace Docker images:
@@ -70,13 +70,10 @@ OpenJDK v11.0.16.1:
 ```text
 bundler:
      [echo] Fetching gems for ../backend/Gemfile
-     [java] /Users/dsteelma/Junk4/aspace_template_fix/archivesspace/build/gems/gems/bundler-2.1.4/lib/bundler/vendor/net-http-persistent/lib/net/http/persistent.rb:203: warning: Process#getrlimit not supported on this platform
-     [java] git version 2.38.0
-     [java] warning: thread "Ruby-0-Thread-1: uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/open3.rb:200" terminated with exception (report_on_exception is true):
-     [java] NotImplementedError: waitpid unsupported or native support failed to load; see https://github.com/jruby/jruby/wiki/Native-Libraries
-     [java]   waitpid at org/jruby/RubyProcess.java:936
-     [java] NotImplementedError: waitpid unsupported or native support failed to load; see https://github.com/jruby/jruby/wiki/Native-Libraries
-     [java]   waitpid at org/jruby/RubyProcess.java:936
+     [java] Retrying fetcher due to error (2/4): NameError uninitialized constant Dir::FileUtils
+     [java] Fetching gem metadata from https://rubygems.org/.
+     [java] Retrying fetcher due to error (3/4): NameError uninitialized constant Dir::FileUtils
+     [java] Retrying fetcher due to error (4/4): NameError uninitialized constant Dir::FileUtils
 ```
 
 I was able to get the command to work using Java 8, specifically:
@@ -101,7 +98,8 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.301-b09, mixed mode)
 ```
 
 It is unclear why this error occurs, but it appears to be intermittent, and
-re-running the command will usually work (may take several tries).
+re-running the command will usually work (may take several tries, sometimes 5 or
+6, usually making progress and failing differently each time).
 
 ---
 
@@ -239,6 +237,10 @@ At least for the "umd-lib-aspace-theme" plugin, changes can be made directly in
 the "plugins/umd-lib-aspace-theme" directories, and ArchivesSpace will
 immediately pick up the changes without having to be restarted.
 
+**Note:** Development on the plugins can be done directly in the cloned
+repositories in the "plugins" directory, with the usual Rails hot-reload
+support.
+
 ## 3. Sample Data
 
 ### Loading EAD Sample Data
@@ -278,10 +280,23 @@ The "New Background Job - Import Data" form will be displayed.
 to upload. Left-click the "Start Job" button. The "Import Job" page will be
 displayed.
 
-3.7) Once the job has completed, go to the front-end public interface
-(<http://localhost:3001/>). Left-click the "Libraries" link on the
-application home page. The resulting page should display the
-"UMD Test Repository", and indicate that it has 3 collections.
+3.7) Once the job has completed, the "Amoss, William L. papers" collection
+will be published, but the other two collection will be unpublished:
+
+* Archives of the Atlantic Monthly
+* Louis Auchincloss papers
+
+To publish these collections, for each unpublished collection:
+
+3.7.1) Select "Browse | Resources". The "Resources" page will be displayed.
+
+3.7.2) Select the "Edit" button for an unpublished collection, then on the
+resulting page, left-click the "Publish All" button, and then select
+"Publish All" in the confirmation dialog.
+
+3.8) Go to the front-end public interface (<http://localhost:3001/>). Left-click
+the "Libraries" link on the application home page. The resulting page should
+display the "UMD Test Repository", and indicate that it has 3 collections.
 
 ### Destroying Sample Data
 
@@ -301,3 +316,11 @@ From <https://archivesspace.github.io/tech-docs/development/dev.html>:
 > ```
 >
 > Which will first delete then migrate the database.
+
+Note that this should be followed by commands to reset the Solr database, and
+re-run the database migrations:
+
+```zsh
+$ ./build/run solr:reset
+$ ./build/run db:migrate
+```
