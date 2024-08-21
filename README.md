@@ -56,7 +56,7 @@ images. This enables the steps to used with both newer Apple Silicon laptops and
 older Intel-based Apple laptops.
 
 For information about setting up the Kubernetes "build" namespace, see
-the "Docker Builds in Kuberetes" document in Confluence:
+the "Docker Builds in Kubernetes" document in Confluence:
 
 <https://confluence.umd.edu/display/LIB/Docker+Builds+in+Kubernetes>
 
