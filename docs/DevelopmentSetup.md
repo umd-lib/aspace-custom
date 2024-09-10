@@ -171,6 +171,12 @@ $ cd plugins
 
 ```bash
 $ git clone https://github.com/AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin.git aeon_fulfillment
+
+# Checkout the aeon_fulfillment tag specified in docker_config/archivesspace/config/plugins
+$ cd aeon_fulfillment
+$ git checkout 20180726
+$ cd ..
+
 $ git clone https://github.com/umd-lib/umd_aeon_fulfillment.git
 $ git clone git@github.com:umd-lib/umd-lib-aspace-theme.git
 ```
@@ -197,6 +203,7 @@ unless ENV['DISABLE_AEON_REQUEST'] == 'true'
   AppConfig[:plugins] << 'aeon_fulfillment' << 'umd_aeon_fulfillment'
   AppConfig[:aeon_fulfillment] = {
     'umd_test' => {
+      request_in_new_tab: true,
       requests_permitted_for_containers_only: true,
       aeon_web_url: 'https://aeon.lib.umd.edu/logon/',
       aeon_return_link_label: 'UMD Archives',
@@ -220,7 +227,20 @@ hides some of the navigation bar items. To match what is configured on the
 servers, see
 <https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>.
 
-2.5) In the terminal where the "public" front-end is running ("term3" from the
+2.5) In the terminal where the "staff" front-end is running ("term32" from the
+steps above), stop the application using "Ctrl-C", and build/run it again:
+
+```bash
+term2$ <Ctrl-C>
+term2$ build/run frontend:devserver
+```
+
+2.6) Verify that the front-end staff interface is running by going to
+<http://localhost:3000/>. The staff interface should now display UMD branding,
+and a "local development" environment banner, indicating that it has picked up
+the "umd-lib-aspace-theme" plugin.
+
+2.7) In the terminal where the "public" front-end is running ("term3" from the
 steps above), stop the application using "Ctrl-C", and build/run it again:
 
 ```bash
@@ -228,7 +248,7 @@ term3$ <Ctrl-C>
 term3$ build/run public:devserver
 ```
 
-2.6) Verify that the front-end public interface is running by going to
+2.8) Verify that the front-end public interface is running by going to
 <http://localhost:3001/>. The public interface should now display UMD branding,
 and a "local development" environment banner, indicating that it has picked up
 the "umd-lib-aspace-theme" plugin.
