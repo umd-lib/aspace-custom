@@ -193,7 +193,8 @@ $ cd ..
 $ vi common/config/config.rb
 ```
 
-adding the following lines (modified from https://bitbucket.org/umd-lib/aspace-env/src/master/archivesspace/config/config.rb):
+adding the following lines (drawn from
+<https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>):
 
 ```ruby
 AppConfig[:plugins] << 'umd-lib-aspace-theme'
