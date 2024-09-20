@@ -286,7 +286,9 @@ AppConfig[:authentication_sources] = [
           login_url: '/cas/login',
           logout_url: '/cas/logout',
           service_validate_url: '/cas/serviceValidate',
-          fetch_raw_info: ->(s, o, t, user_info) {  { email: "#{user_info['user']}@umd.edu" } }
+          fetch_raw_info: Proc.new { |strategy, opts, ticket, user_info, rawxml|
+            { email: "#{user_info['user']}@umd.edu" }
+          }
         }
   }
 ]
