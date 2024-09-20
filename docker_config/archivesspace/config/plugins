@@ -3,7 +3,7 @@
 https://github.com/umd-lib/umd-lib-aspace-theme.git 1.10.0
 https://github.com/lyrasis/aspace-oauth.git dd4ac72f8fbedf612a52b58feeeb5ddbc078fc9d
 https://github.com/hudmol/payments_module.git 5fddd44caf2002ba34578e1eead7fb9efb83cdee
-https://github.com/umd-lib/aspace_yale_accessions.git 1.1-umd-0.4
+https://github.com/umd-lib/aspace_yale_accessions.git 1.2-umd-1.0
 # for the default_text_for_notes plugin, we were using the tagged version of "v1.3.x-1.2"
 # but sent a fix to address https://issues.umd.edu/browse/LIBASPACE-32.
 https://github.com/hudmol/default_text_for_notes.git 383ec7517bb016a69b118c17517622bd1b1477c5
