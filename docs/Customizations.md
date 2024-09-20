@@ -36,6 +36,18 @@ plugin.
 
 <https://github.com/hudmol/payments_module.git>
 
+Tried to update this plugin to v1.5, but ran into the following database
+migration issue when starting the application in the Kubernetes “sandbox”:
+
+```text
+aspace-app-0 aspace I, [2024-09-20T17:05:11.783742 #12]  INFO -- : Begin applying migration version 7, direction: up
+aspace-app-0 aspace E, [2024-09-20T17:05:11.807444 #12] ERROR -- : Java::ComMysqlJdbcExceptionsJdbc4::MySQLIntegrityConstraintViolationException: Duplicate entry 'payments_module_cost_center' for key 'name': INSERT INTO `enumeration` (`name`, `json_schema_version`, `editable`, `create_time`, `system_mtime`, `user_mtime`) VALUES ('payments_module_cost_center', 1, 1, '2024-09-20 17:05:11', '2024-09-20 17:05:11', '2024-09-20 17:05:11')
+```
+
+Set the “hudmol/payments_module” to use version "20190624”, which is the
+tagged version of the “5fddd44caf2002ba34578e1eead7fb9efb83cdee” commit hash
+that was previously being used.
+
 ### lyrasis/aspace-oauth
 
 <https://github.com/lyrasis/aspace-oauth.git>
