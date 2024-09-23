@@ -31,33 +31,33 @@ images. This enables the steps to used with both newer Apple Silicon laptops and
 older Intel-based Apple laptops.
 
 For information about setting up the Kubernetes "build" namespace, see
-the "Docker Builds in Kubernetes" document in Confluence:
+the "Docker Builds" document in the "umd-lib/devops" GitHub repository:
 
-<https://confluence.umd.edu/display/LIB/Docker+Builds+in+Kubernetes>
+<https://github.com/umd-lib/devops/blob/main/k8s/docs/DockerBuilds.md>
 
 1) Switch to the Kubernetes "build" namespace:
 
-```bash
-$ kubectl config use-context build
-```
+    ```bash
+    $ kubectl config use-context build
+    ```
 
 2) Build the Docker images, where \<TAG> is the Docker image tag to use:
 
-```bash
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:<TAG> -f Dockerfile .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:<TAG> -f Dockerfile-api-proxy .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:<TAG> -f Dockerfile-solr .
-```
+    ```bash
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:<TAG> -f Dockerfile .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:<TAG> -f Dockerfile-api-proxy .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:<TAG> -f Dockerfile-solr .
+    ```
 
-For example, to build all the images using "latest" as the image tag:
+    For example, to build all the images using "latest" as the image tag:
 
-```bash
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:latest -f Dockerfile .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:latest -f Dockerfile-api-proxy .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:latest -f Dockerfile-solr .
-```
+    ```bash
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:latest -f Dockerfile .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:latest -f Dockerfile-api-proxy .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:latest -f Dockerfile-solr .
+    ```
 
-The images will be automatically pushed to the Nexus.
+    The images will be automatically pushed to the Nexus.
 
 ## Directories
 
