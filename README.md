@@ -15,31 +15,6 @@ This repository is intended to replace:
 
 See [docs/DevelopmentSetup.md](docs/DevelopmentSetup.md).
 
-## ArchivesSpace Upgrade/Docker Image Creation
-
-When upgrading to ArchivesSpace v3.3.1 upgrade, there was a peculiar gem version
-conflict between the stock ArchivesSpace and the "aspace-oauth" gem used for
-CAS authentication (see LIBASPACE-333 for more information). The conflict
-manifested itself by the ArchivesSpace server throwing the following error on
-startup:
-
-```text
-WARNING: ERROR: initialization failed
-org.jruby.rack.RackInitializationException: Could not find public_suffix-4.0.6 in any of the sources
-```
-
-The workaround was to edit [docker_config/archivesspace/scripts/plugins.sh](docker_config/archivesspace/scripts/plugins.sh)
-script) so that the "public_suffix" and "addressable" gems versions are
-compatible with the stock ArchivesSpace.
-
-As it is likely that the gem versions will slowly change over time, this script
-should be reviewed whenever a new ArchivesSpace upgrade performed, or new
-production Docker images are created.
-
-This issue was also discussed on the ArchivesSpace mailing list, see
-<http://lyralists.lyrasis.org/pipermail/archivesspace_users_group/2022-December/009705.html>
-and responses.
-
 ## Dockerfiles
 
 * Dockerfile - The Dockerfile for creating the UMD-customized ArchivesSpace
@@ -56,33 +31,33 @@ images. This enables the steps to used with both newer Apple Silicon laptops and
 older Intel-based Apple laptops.
 
 For information about setting up the Kubernetes "build" namespace, see
-the "Docker Builds in Kuberetes" document in Confluence:
+the "Docker Builds" document in the "umd-lib/devops" GitHub repository:
 
-<https://confluence.umd.edu/display/LIB/Docker+Builds+in+Kubernetes>
+<https://github.com/umd-lib/devops/blob/main/k8s/docs/DockerBuilds.md>
 
 1) Switch to the Kubernetes "build" namespace:
 
-```bash
-$ kubectl config use-context build
-```
+    ```bash
+    $ kubectl config use-context build
+    ```
 
 2) Build the Docker images, where \<TAG> is the Docker image tag to use:
 
-```bash
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:<TAG> -f Dockerfile .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:<TAG> -f Dockerfile-api-proxy .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:<TAG> -f Dockerfile-solr .
-```
+    ```bash
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:<TAG> -f Dockerfile .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:<TAG> -f Dockerfile-api-proxy .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:<TAG> -f Dockerfile-solr .
+    ```
 
-For example, to build all the images using "latest" as the image tag:
+    For example, to build all the images using "latest" as the image tag:
 
-```bash
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:latest -f Dockerfile .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:latest -f Dockerfile-api-proxy .
-$ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:latest -f Dockerfile-solr .
-```
+    ```bash
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace:latest -f Dockerfile .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-api-proxy:latest -f Dockerfile-api-proxy .
+    $ docker buildx build --platform linux/amd64 --builder=kube --push --no-cache -t docker.lib.umd.edu/aspace-solr:latest -f Dockerfile-solr .
+    ```
 
-The images will be automatically pushed to the Nexus.
+    The images will be automatically pushed to the Nexus.
 
 ## Directories
 

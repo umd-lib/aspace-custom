@@ -43,19 +43,3 @@ for gemfile in $(find /apps/aspace/archivesspace/plugins/ -maxdepth 2 -name Gemf
     echo Initializing plugin: "$plugin"
     /apps/aspace/archivesspace/scripts/initialize-plugin.sh "$plugin"
 done
-
-# Replace the following Gem version in the aspace-oauth/Gemfile.lock file, to
-# match those used by ArchivesSpace. This change is necessary to prevent an
-# error at startup, and needs to be re-evaluated on each ArchivesSpace upgrade
-# and Docker image creation (as the versions in the aspace-oauth Gemfile are
-# not pinned, they may change when a new Docker image is created).
-gemfile_lock='/apps/aspace/archivesspace/plugins/aspace-oauth/Gemfile.lock'
-if [ -f "$gemfile_lock" ]; then
-  echo Adjusting gem versions in: "$gemfile_lock"
-  sed -i 's/public_suffix (4.0.7)/public_suffix (4.0.6)/g' "$gemfile_lock"
-  sed -i 's/addressable (2.8.6)/addressable (2.8.0)/g' "$gemfile_lock"
-  sed -i 's/public_suffix (>= 2.0.2, < 6.0)/public_suffix (>= 2.0.2, < 5.0)/g' "$gemfile_lock"
-  plugin=$(basename $(dirname $gemfile_lock))
-
-  /apps/aspace/archivesspace/scripts/initialize-plugin.sh "$plugin"
-fi

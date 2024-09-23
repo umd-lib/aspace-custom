@@ -1,3 +1,3 @@
 # docs/resource/ead/README.md
 
-This directory contais EAD files for testing data imports.
+This directory contains EAD files for testing data imports.

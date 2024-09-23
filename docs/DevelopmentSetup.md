@@ -33,10 +33,10 @@ $ cd archivesspace
 $ git checkout <VERSION_TAG>
 ```
 
-For example, to switch to v3.3.1, use:
+For example, to switch to v3.5.1, use:
 
 ```bash
-$ git checkout v3.3.1
+$ git checkout v3.5.1
 ```
 
 1.4) Retrieve the ArchivesSpace Docker images:
@@ -70,13 +70,10 @@ OpenJDK v11.0.16.1:
 ```text
 bundler:
      [echo] Fetching gems for ../backend/Gemfile
-     [java] /Users/dsteelma/Junk4/aspace_template_fix/archivesspace/build/gems/gems/bundler-2.1.4/lib/bundler/vendor/net-http-persistent/lib/net/http/persistent.rb:203: warning: Process#getrlimit not supported on this platform
-     [java] git version 2.38.0
-     [java] warning: thread "Ruby-0-Thread-1: uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/open3.rb:200" terminated with exception (report_on_exception is true):
-     [java] NotImplementedError: waitpid unsupported or native support failed to load; see https://github.com/jruby/jruby/wiki/Native-Libraries
-     [java]   waitpid at org/jruby/RubyProcess.java:936
-     [java] NotImplementedError: waitpid unsupported or native support failed to load; see https://github.com/jruby/jruby/wiki/Native-Libraries
-     [java]   waitpid at org/jruby/RubyProcess.java:936
+     [java] Retrying fetcher due to error (2/4): NameError uninitialized constant Dir::FileUtils
+     [java] Fetching gem metadata from https://rubygems.org/.
+     [java] Retrying fetcher due to error (3/4): NameError uninitialized constant Dir::FileUtils
+     [java] Retrying fetcher due to error (4/4): NameError uninitialized constant Dir::FileUtils
 ```
 
 I was able to get the command to work using Java 8, specifically:
@@ -101,7 +98,8 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.301-b09, mixed mode)
 ```
 
 It is unclear why this error occurs, but it appears to be intermittent, and
-re-running the command will usually work (may take several tries).
+re-running the command will usually work (may take several tries, sometimes 5 or
+6, usually making progress and failing differently each time).
 
 ---
 
@@ -122,40 +120,16 @@ $ docker exec -it as_dev_db /bin/bash -c \
     mysql --host=127.0.0.1 --port=3306  -u root -p123456 archivesspace'
 ```
 
-1.8.3) Setup the development database:
-
-```bash
-$ ./build/run db:migrate
-```
-
-1.8.4) Clear out any existing Solr state:
-
-```bash
-$ ./build/run solr:reset
-```
-
-1.9) In separate terminals, run the following commands:
-
-```bash
-term1$ build/run backend:devserver
-
-term2$ build/run frontend:devserver
-
-term3$ build/run public:devserver
-
-term4$ build/run indexer
-```
-
-1.10) Verify that the front-end staff interface is running by going to
-<http://localhost:3000/>. You can sign in using "admin" as the username, and
-"admin" as the password.
-
-1.11) Verify that the front-end public interface is running by going to
-<http://localhost:3001/>.
-
-1.12) Verify that a Solr instance is running at <http://localhost:8983/>.
-
 ## 2. ArchivesSpace UMD Plugins Setup
+
+---
+
+**Note:**  Running a stock ArchivesSpace
+
+If at this point you just want to run a stock ArchivesSpace, without any UMD
+customizations, skip this step, and go directly to Step 3.
+
+---
 
 2.1) In a separate terminal, switch to the "plugins" subdirectory:
 
@@ -168,12 +142,20 @@ $ cd plugins
 * AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin
   (<https://github.com/AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin>) -
   Should be cloned into an "aeon_fulfillment" directory
+* umd-libaspace_yale_accessions (<https://github.com/umd-lib/aspace_yale_accessions>)
 * umd-lib/umd_aeon_fulfillment (<https://github.com/umd-lib/umd_aeon_fulfillment>)
 * umd-lib/umd-lib-aspace-theme (<https://github.com/umd-lib/umd-lib-aspace-theme>)
 
 ```bash
 $ git clone https://github.com/AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin.git aeon_fulfillment
-$ git clone https://github.com/umd-lib/umd_aeon_fulfillment.git
+
+# Checkout the aeon_fulfillment tag specified in docker_config/archivesspace/config/plugins
+$ cd aeon_fulfillment
+$ git checkout 20180726
+$ cd ..
+
+$ git clone git@github.com:umd-lib/aspace_yale_accessions.git
+$ git clone git@github.com:umd-lib/umd_aeon_fulfillment.git
 $ git clone git@github.com:umd-lib/umd-lib-aspace-theme.git
 ```
 
@@ -189,9 +171,11 @@ $ cd ..
 $ vi common/config/config.rb
 ```
 
-adding the following lines (modified from https://bitbucket.org/umd-lib/aspace-env/src/master/archivesspace/config/config.rb):
+adding the following lines (drawn from
+<https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>):
 
 ```ruby
+AppConfig[:plugins] << 'aspace_yale_accessions'
 AppConfig[:plugins] << 'umd-lib-aspace-theme'
 AppConfig[:public_theme] = 'umd-lib-aspace-theme'
 
@@ -199,6 +183,7 @@ unless ENV['DISABLE_AEON_REQUEST'] == 'true'
   AppConfig[:plugins] << 'aeon_fulfillment' << 'umd_aeon_fulfillment'
   AppConfig[:aeon_fulfillment] = {
     'umd_test' => {
+      request_in_new_tab: true,
       requests_permitted_for_containers_only: true,
       aeon_web_url: 'https://aeon.lib.umd.edu/logon/',
       aeon_return_link_label: 'UMD Archives',
@@ -206,6 +191,8 @@ unless ENV['DISABLE_AEON_REQUEST'] == 'true'
     }
   }
 end
+
+AppConfig[:pui_enable_staff_link] = false
 
 AppConfig[:pui_page_actions_request] = false
 
@@ -216,30 +203,63 @@ AppConfig[:pui_hide][:agents] = true
 AppConfig[:pui_hide][:search_tab] = true
 ```
 
-This sets the "theme" to use the "umd-lib-aspace-theme" plugin, configures the
-"aeon_fulfillment" plugin for the "UMD_TEST" repository (created below), and
-hides some of the navigation bar items. To match what is configured on the
-servers, see
+This loads and configures various UMD-customized plugins, including:
+
+* Sets the "theme" to use the "umd-lib-aspace-theme" plugin in the front-end
+  (staff) and public interfaces.
+* Configures the "aeon_fulfillment"/"umd_aeon_fulfillment" plugins for the
+  "UMD_TEST" repository (created below), and hides some of the navigation bar
+  items.
+* Adds the "umd-lib/aspace_yale_accessions" plugin for handling
+  "Department Codes" in the front-end (staff) interface, and configuring the
+  "Identifier" field for accessions and resources.
+
+This configuration does not include all the plugins used on the server. To see
+a list of all the plugins (and their versions) used on the servers, see
+the "[docker_config/archivesspace/config/plugins][aspace-custom-plugins]" file
+in the "[umd-lib/aspace-custom][aspace-custom]" GitHub repository.
+
+To match what is configured on the servers, see
 <https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/archivesspace/config/config.rb>.
 
-2.5) In the terminal where the "public" front-end is running ("term3" from the
-steps above), stop the application using "Ctrl-C", and build/run it again:
+## 3. Run ArchivesSpace
+
+3.1) Setup the development database:
 
 ```bash
-term3$ <Ctrl-C>
-term3$ build/run public:devserver
+$ ./build/run db:migrate
 ```
 
-2.6) Verify that the front-end public interface is running by going to
-<http://localhost:3001/>. The public interface should now display UMD branding,
-and a "local development" environment banner, indicating that it has picked up
-the "umd-lib-aspace-theme" plugin.
+3.2) Clear out any existing Solr state:
 
-At least for the "umd-lib-aspace-theme" plugin, changes can be made directly in
-the "plugins/umd-lib-aspace-theme" directories, and ArchivesSpace will
-immediately pick up the changes without having to be restarted.
+```bash
+$ ./build/run solr:reset
+```
 
-## 3. Sample Data
+3.3) In separate terminals, run the following commands:
+
+```bash
+term1$ build/run backend:devserver
+
+term2$ build/run frontend:devserver
+
+term3$ build/run public:devserver
+
+term4$ build/run indexer
+```
+
+3.4) Verify that the front-end staff interface is running by going to
+<http://localhost:3000/>.
+
+If you are running a stock ArchivesSpace, you can sign in using "admin" as the
+username, and "admin" as the password.
+
+3.5) Verify that the front-end public interface is running by going to
+<http://localhost:3001/>.
+
+3.6) Verify that a Solr instance is running at <http://localhost:8983/>.
+
+## 4. Sample Data
 
 ### Loading EAD Sample Data
 
@@ -249,13 +269,13 @@ Sample data files are in the "docs/resources/ead" folder:
 * 0073.LIT_20171121_141039_UTC__ead.xml
 * 0057.LIT_20171121_135754_UTC__ead.xml
 
-3.1) Log in to the front-end staff interface (<http://localhost:3000/>).
+4.1) Log in to the front-end staff interface (<http://localhost:3000/>).
 
-3.2) Create a new repository by selecting "System | Manage Repositories" in the
+4.2) Create a new repository by selecting "System | Manage Repositories" in the
 navigation bar, and then left-clicking the "Create Repository" button in the
 resulting page. The "New Repository" form will be displayed.
 
-3.3) On the "New Repository" form, fill out the following fields:
+4.3) On the "New Repository" form, fill out the following fields:
 
 | Field                 | Value |
 | ----------------------| ----- |
@@ -266,24 +286,37 @@ resulting page. The "New Repository" form will be displayed.
 then left-click the "Save Repository" button. The page should refresh indicating
 that the repository was created.
 
-3.4) In the navigation bar, left-click the "Select Repository" drop-down, select
+4.4) In the navigation bar, left-click the "Select Repository" drop-down, select
 the "UMD_TEST" repository, and left-click the "Select Repository" button. The
 page will refresh and indicate that the "UMD_TEST" repository is now active.
 
-3.5) In the application menubar, select "Create | Background Job | Import Data".
+4.5) In the application menubar, select "Create | Background Job | Import Data".
 The "New Background Job - Import Data" form will be displayed.
 
-3.6) In the "New Background Job - Import Data" form, select "EAD" in the
+4.6) In the "New Background Job - Import Data" form, select "EAD" in the
 "Import Type" dropdown. Then, using the "Add file" button, select the EAD files
 to upload. Left-click the "Start Job" button. The "Import Job" page will be
 displayed.
 
-3.7) Once the job has completed, go to the front-end public interface
-(<http://localhost:3001/>). Left-click the "Libraries" link on the
-application home page. The resulting page should display the
-"UMD Test Repository", and indicate that it has 3 collections.
+4.7) Once the job has completed, the "Amoss, William L. papers" collection
+will be published, but the other two collection will be unpublished:
 
-### Destroying Sample Data
+* Archives of the Atlantic Monthly
+* Louis Auchincloss papers
+
+To publish these collections, for each unpublished collection:
+
+4.7.1) Select "Browse | Resources". The "Resources" page will be displayed.
+
+4.7.2) Select the "Edit" button for an unpublished collection, then on the
+resulting page, left-click the "Publish All" button, and then select
+"Publish All" in the confirmation dialog.
+
+4.8) Go to the front-end public interface (<http://localhost:3001/>). Left-click
+the "Libraries" link on the application home page. The resulting page should
+display the "UMD Test Repository", and indicate that it has 3 collections.
+
+### Resetting the Sample Data
 
 ---
 
@@ -301,3 +334,18 @@ From <https://archivesspace.github.io/tech-docs/development/dev.html>:
 > ```
 >
 > Which will first delete then migrate the database.
+
+Note that this should be followed by commands to reload the "accessibility.sql"
+sample date, reset the Solr database, and re-run the database migrations:
+
+```zsh
+$ docker exec -it as_dev_db /bin/bash -c \
+    'gzip -dc /tmp/accessibility.sql.gz | \
+    mysql --host=127.0.0.1 --port=3306  -u root -p123456 archivesspace'
+$ ./build/run solr:reset
+$ ./build/run db:migrate
+```
+
+---
+[aspace-custom]: https://github.com/umd-lib/aspace-custom
+[aspace-custom-plugins]: https://github.com/umd-lib/aspace-custom/blob/main/docker_config/archivesspace/config/plugins
