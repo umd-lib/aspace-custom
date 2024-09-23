@@ -5,7 +5,7 @@
 This documents describes the customizations to the stock ArchivesSpace
 application provided by this repository.
 
-See [docker_config/archivesspace/config/plugins][plugins]" for version
+See "[docker_config/archivesspace/config/plugins][plugins]" for version
 information on individual plugins.
 
 ## ArchivesSpace Plugins
