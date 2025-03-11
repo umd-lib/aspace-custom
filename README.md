@@ -15,6 +15,38 @@ This repository is intended to replace:
 
 See [docs/DevelopmentSetup.md](docs/DevelopmentSetup.md).
 
+## ArchivesSpace Upgrade/Docker Image Creation
+
+When creating a new Docker image based on to ArchivesSpace v3.5.1 upgrade,
+there was a gem version conflict between the stock ArchivesSpace and the
+transitive dependencies of the "digitization_work_order" plugin gem.
+
+The conflict manifested itself by the ArchivesSpace server throwing the
+following error on startup:
+
+```text
+INFO: An exception happened during JRuby-Rack startup
+Could not find rubyzip-2.3.2 in any of the sources
+...
+
+WARNING: ERROR: initialization failed
+org.jruby.rack.RackInitializationException: Could not find public_suffix-4.0.6 in any of the sources
+...
+```
+
+The workaround was to edit the
+[docker_config/archivesspace/scripts/plugins.sh](docker_config/archivesspace/scripts/plugins.sh)
+script) so that the "rubyzip" gem uses a version that is compatible with the
+stock ArchivesSpace.
+
+As it is likely that the gem versions will slowly change over time, this script
+should be reviewed whenever a new ArchivesSpace upgrade performed, or new
+production Docker images are created.
+
+This issue was also discussed on the ArchivesSpace mailing list, see
+<https://groups.google.com/a/lyrasislists.org/g/archivesspace_users_group_archived/c/j_12U3N8vd8>
+and responses.
+
 ## Dockerfiles
 
 * Dockerfile - The Dockerfile for creating the UMD-customized ArchivesSpace
