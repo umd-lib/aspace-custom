@@ -9,7 +9,7 @@
 # This Dockerfile is largely taken from
 # https://github.com/archivesspace/archivesspace/blob/v3.1.0/Dockerfile
 # and https://github.com/dartmouth-dltg/aspace-docker
-FROM openjdk:8u265-jre
+FROM eclipse-temurin:8u462-b08-jre
 
 ENV LANG=C.UTF-8
 
@@ -45,9 +45,12 @@ COPY docker_config/archivesspace/scripts /apps/aspace/scripts
 # # Copy Solr files into /apps/aspace/archivesspace/solr, for Solr checksum verification
 COPY docker_config/solr/conf /apps/aspace/archivesspace/solr
 
-RUN groupadd -g 1000 aspace && \
-    useradd -l --create-home --uid 1000 --gid aspace aspace && \
-    chown -R aspace:aspace /apps
+# Rename the default "ubuntu" user (UID/GID 1000) to "aspace"
+# Note: Kubernetes assumes the "aspace" user is UID/GID 1000 for file permissions
+RUN usermod -l aspace -d /home/aspace -m ubuntu && \
+    groupmod -n aspace ubuntu && \
+    usermod -c "" aspace && \
+    chown --recursive aspace:aspace /apps
 
 USER aspace
 
