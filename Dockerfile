@@ -49,7 +49,8 @@ COPY docker_config/solr/conf /apps/aspace/archivesspace/solr
 # Note: Kubernetes assumes the "aspace" user is UID/GID 1000 for file permissions
 RUN usermod -l aspace -d /home/aspace -m ubuntu && \
     groupmod -n aspace ubuntu && \
-    usermod -c "" aspace
+    usermod -c "" aspace && \
+    chown --recursive aspace:aspace /apps
 
 USER aspace
 
