@@ -9,7 +9,7 @@
 # This Dockerfile is largely taken from
 # https://github.com/archivesspace/archivesspace/blob/v3.1.0/Dockerfile
 # and https://github.com/dartmouth-dltg/aspace-docker
-FROM openjdk:8u265-jre
+FROM eclipse-temurin:8u462-b08-jre
 
 ENV LANG=C.UTF-8
 
