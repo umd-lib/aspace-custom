@@ -150,6 +150,9 @@ AppConfig[:oai_proxy_url] = 'http://your-public-oai-url.example.com'
 AppConfig[:oai_ead_options] = {}
 # Example: AppConfig[:oai_ead_options] = { :include_daos => true, :use_numbered_c_tags => true, :include_uris => false }
 
+# Use Rails.force_ssl when running in production
+AppConfig[:force_ssl] = false
+
 ##
 ## Other less commonly changed settings are below
 ##
@@ -550,9 +553,11 @@ AppConfig[:record_inheritance_resolves] = [
 AppConfig[:pui_search_results_page_size] = 10
 AppConfig[:pui_branding_img] = 'ArchivesSpaceLogo.svg'
 AppConfig[:pui_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
+AppConfig[:pui_show_favicon] = true # whether or not to show a favicon
 
 AppConfig[:frontend_branding_img] = 'archivesspace/ArchivesSpaceLogo.svg'
 AppConfig[:frontend_branding_img_alt_text] = 'ArchivesSpace - a community served by Lyrasis.'
+AppConfig[:frontend_show_favicon] = true # whether or not to show a favicon
 
 AppConfig[:pui_block_referrer] = true # patron privacy; blocks full 'referrer' when going outside the domain
 
@@ -592,11 +597,15 @@ AppConfig[:pui_hide][:container_inventory] = false
 # Whether to display linked deaccessions
 AppConfig[:pui_display_deaccessions] = true
 
+# Where to position the PUI Collection Organization sidebar
+# Options: 'left' or 'right'
+AppConfig[:pui_collection_org_sidebar_position] = 'left'
+
 # Whether to display archival record identifiers in the PUI collection organization tree
 AppConfig[:pui_display_identifiers_in_resource_tree] = false
 
-#The number of characters to truncate before showing the 'Read More' link on notes
-AppConfig[:pui_readmore_max_characters] = 450
+# The number of characters to truncate before showing the 'Read More' link on notes
+AppConfig[:pui_readmore_max_characters] = 1000
 
 # Whether to expand all additional information blocks at the bottom of record pages by default. `true` expands all blocks, `false` collapses all blocks.
 AppConfig[:pui_expand_all] = true
@@ -839,6 +848,30 @@ AppConfig[:pui_pdf_title_line_height] = "140%"
 # Password recovery - requires email configuration
 # See example email configuration above
 AppConfig[:allow_password_reset] = false
+
+# Allow users with the 'administer_system' role to view the system_info route (e.g., FRONTEND_BASE_URL/system_info)
+# By default, this route is only accessible to the 'admin' user, and no other admins.
+
+AppConfig[:allow_other_admins_access_to_system_info] = false
+
+# If enabled, the importer will drop subrecords (dates, extents, instances or
+# notes) when all spreadsheet columns for that existing subrecord have no values.
+# As not all subrecord fields have a corresponding column in the spreadsheet, you
+# may unwittingly drop a subrecord which has data in other fields.
+
+AppConfig[:bulk_archival_object_updater_apply_deletes] = false
+
+# By default, the importer will throw an error when it finds a top container
+# in the spreadsheet that is not attached within the current resource's hierarchy.
+# When enabled, those missing top containers are created on demand.
+# This configuration setting can be overridden by providing a
+# `create_missing_top_containers` parameter to the import job.
+
+AppConfig[:bulk_archival_object_updater_create_missing_top_containers] = false
+
+# Default search scope setting
+# Options: 'all_record_types', 'collections_only'
+AppConfig[:search_default_scope] = 'all_record_types'
 
 # UMD Customization
 # umd-handle service environment variables
