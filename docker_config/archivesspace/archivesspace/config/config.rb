@@ -61,27 +61,21 @@ AppConfig[:docs_url] = "http://localhost:8888"
 # command is running. When running as a daemon/service, this is put into a
 # file in logs/archivesspace.out. You can change this file by changing the log
 # value to a filepath that archivesspace has write access to.
-AppConfig[:frontend_log] = "default"
+# UMD Customization
+# Change log destination to STDOUT and log level for Kubernetes
+AppConfig[:frontend_log] = "/dev/stdout"
 # Log level for the frontend, values: (everything) debug, info, warn, error, fatal (severe only)
-# UMD Customization
 AppConfig[:frontend_log_level] = "info"
-# End UMD Customization
 # Log level for the backend, values: (everything) debug, info, warn, error, fatal (severe only)
-AppConfig[:backend_log] = "default"
-# UMD Customization
+AppConfig[:backend_log] = "/dev/stdout"
 AppConfig[:backend_log_level] = "info"
-# End UMD Customization
 
-AppConfig[:pui_log] = "default"
-# UMD Customization
+AppConfig[:pui_log] = "/dev/stdout"
 AppConfig[:pui_log_level] = "info"
-# End UMD Customization
 
-AppConfig[:indexer_log] = "default"
-# UMD Customization
+AppConfig[:indexer_log] = "/dev/stdout"
 AppConfig[:indexer_log_level] = "info"
 # End UMD Customization
-
 
 # Set to true to log all SQL statements.  Note that this will have a performance
 # impact!
