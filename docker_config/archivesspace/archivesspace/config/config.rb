@@ -159,7 +159,9 @@ AppConfig[:default_admin_password] = "admin"
 # distribution.  You don't need to change this value unless you specifically
 # want ArchivesSpace to put its data files elsewhere.
 #
-AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")
+# UMD Customization
+#AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")
+# End UMD Customization
 
 # UMD Customization
 AppConfig[:backup_directory] = proc { File.join(AppConfig[:data_directory], "db_backups") }
