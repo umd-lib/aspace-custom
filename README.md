@@ -109,7 +109,7 @@ ArchivesSpace distribution by the "scripts/plugins.sh" script.
 
 The files cannot be placed in the "archivesspace" directory, because the
 required plugin directories don't exist until the "plugins.sh" script creates
-them,
+them.
 
 #### docker_config/archivesspace/config/
 

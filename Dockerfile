@@ -21,8 +21,8 @@
 # * the number of ports available via EXPOSE is limited to the backend,
 #   frontend, and public interfaces.
 #
-# * the CMD used by the Dockerfile has been customized, so that
-#   "docker-startup.sh" is run
+# * the CMD used by the Dockerfile has been customized, so that the
+#   "docker-startup.sh" script is run
 FROM ubuntu:22.04
 
 ENV ARCHIVESSPACE_LOGS=/dev/null \
