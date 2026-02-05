@@ -27,3 +27,12 @@ RUN chown -R solr:solr $ARCHIVESSPACE_CONFIGSET_PATH
 # /opt/solr/modules/analysis-extras/lib/icu4j-*.jar
 
 USER solr
+
+# UMD Customization
+# Create Solr core for ArchivesSpace
+
+RUN mkdir -p /var/solr/data/archivesspace
+RUN cp -r /opt/solr/server/solr/configsets/archivesspace/conf /var/solr/data/archivesspace/conf
+RUN echo "name=archivesspace" > /var/solr/data/archivesspace/core.properties
+
+# End UMD Customization
