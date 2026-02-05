@@ -26,8 +26,6 @@ mkdir -p "$PLUGINS_DIR"
 grep -v '^\s*#' /apps/aspace/config/plugins | install_plugins
 
 # plugin customization
-# tweaks the plugin to migration automagically
-sed -i 's/while true/while false/' "$PLUGINS_DIR/payments_module/migrations/002_load_fund_codes.rb"
 
 # dump all the default text notes
 rm "$PLUGINS_DIR"/default_text_for_notes/config/*.txt

@@ -105,11 +105,9 @@ AppConfig[:locale] = :en
 
 # Plug-ins to load. They will load in the order specified
 # UMD Customization
-AppConfig[:plugins] = ['local', 'aspace_feedback', 'lcnaf', 'payments_module',
-                       'aspace-oauth',
+AppConfig[:plugins] = ['local', 'aspace_feedback', 'lcnaf', 'aspace-oauth',
                        'aspace_yale_accessions', 'default_text_for_notes',
-                       'and_search', 'digitization_work_order',
-                       'umd-lib-aspace-theme']
+                       'digitization_work_order', 'umd-lib-aspace-theme']
 
 unless ENV['DISABLE_AEON_REQUEST'] == 'true'
   AppConfig[:plugins] << 'aeon_fulfillment' << 'umd_aeon_fulfillment'
