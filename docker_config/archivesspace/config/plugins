@@ -1,14 +1,18 @@
 # THESE ARE THE VERSIONS OF PLUGINS
 # URL VERSION [NAME]
-https://github.com/umd-lib/umd-lib-aspace-theme.git 1.10.2
-https://github.com/lyrasis/aspace-oauth.git v3.5.0
-https://github.com/hudmol/payments_module.git 20190624
-https://github.com/umd-lib/aspace_yale_accessions.git 1.2-umd-1.0
-# for the default_text_for_notes plugin, we were using the tagged version of "v1.3.x-1.2"
-# but sent a fix to address https://issues.umd.edu/browse/LIBASPACE-32.
+https://github.com/umd-lib/umd-lib-aspace-theme.git 2.0.0
+https://github.com/lyrasis/aspace-oauth.git v4.0.0-1
+https://github.com/umd-lib/aspace_yale_accessions.git 1.2-umd-2.0
+# for the default_text_for_notes plugin, we were using the tagged version of
+# "v1.3.x-1.2" but provided https://github.com/hudmol/default_text_for_notes/pull/2
+# fix to address LIBASPACE-32. The pull request was merged, but no new tagged
+# version was released, so are now using the tip of the "master" branch.
 https://github.com/hudmol/default_text_for_notes.git 383ec7517bb016a69b118c17517622bd1b1477c5
-https://github.com/hudmol/and_search.git v0.1
-https://github.com/hudmol/digitization_work_order.git v1.13
-https://github.com/AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin.git 20180726 aeon_fulfillment
+https://github.com/hudmol/digitization_work_order.git v2.1
 https://github.com/umd-lib/aspace-umd-lib-handle-service 2.0.0
-https://github.com/umd-lib/umd_aeon_fulfillment.git 1.0.2
+# The umd_aeon_fulfillment plugin is not compatible with later versions of
+# ArchivesSpace-Aeon-Fulfillment-Plugin. Unless there is a specific need for a
+# later version, there is no need to update to the
+# ArchivesSpace-Aeon-Fulfillment-Plugin plugin
+https://github.com/AtlasSystems/ArchivesSpace-Aeon-Fulfillment-Plugin.git 20180726 aeon_fulfillment
+https://github.com/umd-lib/umd_aeon_fulfillment.git 2.0.0

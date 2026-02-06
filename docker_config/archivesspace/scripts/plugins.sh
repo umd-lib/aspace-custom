@@ -26,8 +26,6 @@ mkdir -p "$PLUGINS_DIR"
 grep -v '^\s*#' /apps/aspace/config/plugins | install_plugins
 
 # plugin customization
-# tweaks the plugin to migration automagically
-sed -i 's/while true/while false/' "$PLUGINS_DIR/payments_module/migrations/002_load_fund_codes.rb"
 
 # dump all the default text notes
 rm "$PLUGINS_DIR"/default_text_for_notes/config/*.txt
@@ -43,18 +41,3 @@ for gemfile in $(find /apps/aspace/archivesspace/plugins/ -maxdepth 2 -name Gemf
     echo Initializing plugin: "$plugin"
     /apps/aspace/archivesspace/scripts/initialize-plugin.sh "$plugin"
 done
-
-# Replace the following Gem version in the digitization_work_order/Gemfile.lock
-# file, to match those used by ArchivesSpace. This change is necessary to
-# prevent an error at startup, and needs to be re-evaluated on each
-# ArchivesSpace upgrade and Docker image creation (as the versions in the
-# digitization_work_order Gemfile are not pinned, they may change when a new
-# Docker image is created).
-gemfile_lock='/apps/aspace/archivesspace/plugins/digitization_work_order/Gemfile.lock'
-if [ -f "$gemfile_lock" ]; then
-  echo Adjusting gem versions in: "$gemfile_lock"
-  sed -i 's/rubyzip (2.4.1)/rubyzip (2.3.2)/g' "$gemfile_lock"
-  plugin=$(basename $(dirname $gemfile_lock))
-
-  /apps/aspace/archivesspace/scripts/initialize-plugin.sh "$plugin"
-fi

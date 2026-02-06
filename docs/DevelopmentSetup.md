@@ -8,9 +8,10 @@ and other information useful for developers to be aware of.
 See <https://archivesspace.github.io/tech-docs/development/dev.html> for the
 official ArchivesSpace development environment setup instructions.
 
-This document is designed to support ArchivesSpace v3.0 and later. For earlier
-versions of ArchivesSpace see
-<https://confluence.umd.edu/display/LIB/ArchivesSpace+Development+Environment>.
+## Prerequisites
+
+* Docker
+* OpenJDK 17
 
 ## 1) Stock ArchivesSpace Setup
 
@@ -33,10 +34,10 @@ $ cd archivesspace
 $ git checkout <VERSION_TAG>
 ```
 
-For example, to switch to v3.5.1, use:
+For example, to switch to v4.1.1, use:
 
 ```bash
-$ git checkout v3.5.1
+$ git checkout v4.1.1
 ```
 
 1.4) Retrieve the ArchivesSpace Docker images:
@@ -62,46 +63,6 @@ $ cd ./common/lib && wget https://repo1.maven.org/maven2/mysql/mysql-connector-j
 ```bash
 $ ./build/run bootstrap
 ```
-
----
-**Note:**  On Apple Silicon, got the following error when using
-OpenJDK v11.0.16.1:
-
-```text
-bundler:
-     [echo] Fetching gems for ../backend/Gemfile
-     [java] Retrying fetcher due to error (2/4): NameError uninitialized constant Dir::FileUtils
-     [java] Fetching gem metadata from https://rubygems.org/.
-     [java] Retrying fetcher due to error (3/4): NameError uninitialized constant Dir::FileUtils
-     [java] Retrying fetcher due to error (4/4): NameError uninitialized constant Dir::FileUtils
-```
-
-I was able to get the command to work using Java 8, specifically:
-
-```bash
-$ java -version
-java version "1.8.0_301"
-Java(TM) SE Runtime Environment (build 1.8.0_301-b09)
-Java HotSpot(TM) 64-Bit Server VM (build 25.301-b09, mixed mode)
-```
-
----
-
----
-
-**Note:** This command will occasionally fail with an error message similar to:
-
-```text
-     [java] NameError: uninitialized constant Gem::Installer::FileUtils
-     [java] An error occurred while installing clipboard-rails (1.7.1), and Bundler cannot
-     [java] continue.
-```
-
-It is unclear why this error occurs, but it appears to be intermittent, and
-re-running the command will usually work (may take several tries, sometimes 5 or
-6, usually making progress and failing differently each time).
-
----
 
 1.8) Load the dev database:
 
@@ -201,6 +162,8 @@ AppConfig[:pui_hide][:classifications] = true
 AppConfig[:pui_hide][:subjects] = true
 AppConfig[:pui_hide][:agents] = true
 AppConfig[:pui_hide][:search_tab] = true
+
+AppConfig[:pui_collection_org_sidebar_position] = 'right'
 ```
 
 This loads and configures various UMD-customized plugins, including:
