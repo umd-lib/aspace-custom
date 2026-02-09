@@ -65,16 +65,16 @@ AppConfig[:docs_url] = "http://localhost:8888"
 # Change log destination to STDOUT and log level for Kubernetes
 AppConfig[:frontend_log] = "/dev/stdout"
 # Log level for the frontend, values: (everything) debug, info, warn, error, fatal (severe only)
-AppConfig[:frontend_log_level] = "info"
+AppConfig[:frontend_log_level] = ENV['FRONTEND_LOG_LEVEL'] || "info"
 # Log level for the backend, values: (everything) debug, info, warn, error, fatal (severe only)
 AppConfig[:backend_log] = "/dev/stdout"
-AppConfig[:backend_log_level] = "info"
+AppConfig[:backend_log_level] = ENV['BACKEND_LOG_LEVEL'] || "info"
 
 AppConfig[:pui_log] = "/dev/stdout"
-AppConfig[:pui_log_level] = "info"
+AppConfig[:pui_log_level] = ENV['PUI_LOG_LEVEL'] || "info"
 
 AppConfig[:indexer_log] = "/dev/stdout"
-AppConfig[:indexer_log_level] = "info"
+AppConfig[:indexer_log_level] = ENV['INDEXER_LOG_LEVEL'] || "info"
 # End UMD Customization
 
 # Set to true to log all SQL statements.  Note that this will have a performance
