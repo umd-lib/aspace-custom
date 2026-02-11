@@ -113,6 +113,46 @@ without a separate UMD GitHub repository are outlined.
 
 **These steps are not intended to be an exhaustive test plan.**
 
+### Verification Steps - OAI-PMH endpoint
+
+Not actually a plugin, the OAI-PMH endpoint is stock ArchivesSpace functionality
+that enables OAI-PHM clients to interact with ArchivesSpace.
+
+The OAI-PMH interface is accessible at the "/oai" path on the public interface,
+i.e. for the ArchivesSpace test server:
+
+<https://archives-test.lib.umd.edu/oai?verb=Identify>
+
+This should return an XML response similar to the following:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2026-02-11T14:32:19Z</responseDate>
+  <request verb="Identify">https://archives-test.lib.umd.edu/oai</request>
+  <Identify>
+    <repositoryName>ArchivesSpace OAI Provider</repositoryName>
+    <baseURL>https://archives-test.lib.umd.edu/oai</baseURL>
+    <protocolVersion>2.0</protocolVersion>
+    <adminEmail>admin@example.com</adminEmail>
+    <earliestDatestamp>1970-01-01T00:00:00Z</earliestDatestamp>
+    <deletedRecord>persistent</deletedRecord>
+    <granularity>YYYY-MM-DDThh:mm:ssZ</granularity>
+    <description>
+      <oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd">
+        <scheme>oai</scheme>
+        <repositoryIdentifier>archivesspace</repositoryIdentifier>
+        <delimiter>:</delimiter>
+        <sampleIdentifier>oai:archivesspace//repositories/2/resources/1</sampleIdentifier>
+      </oai-identifier>
+    </description>
+  </Identify>
+</OAI-PMH>
+```
+
+The `<request verb="Identify">` and `<baseURL>` elements should reference the
+public interface URL of the server.
+
 ### Verification Steps - lyrasis/aspace-oauth
 
 **Note:** The following steps assume that you have an active user account
@@ -144,7 +184,7 @@ file, i.e.:
 
 ### Verification Steps - hudmol/digitization_work_order
 
-1) Log in to the ArchivesSpace staff inteface.
+1) Log in to the ArchivesSpace staff interface.
 
 2) Browse the resources (Browse | Resources from the application menubar), and
 left-click the "View" button for one of the resources.
