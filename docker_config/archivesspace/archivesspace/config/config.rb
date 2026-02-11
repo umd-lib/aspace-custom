@@ -42,7 +42,9 @@ AppConfig[:public_url] = "http://#{ENV['SERVER_NAME']}:8081"
 
 # The ArchivesSpace OAI server listens on port 8082 by default.  You can
 # set it to something else below.
-AppConfig[:oai_url] = "http://localhost:8082"
+# UMD Customization
+AppConfig[:oai_url] = "http://#{ENV['SERVER_NAME']}:8082"
+# End UMD Customization
 
 # The ArchivesSpace Solr index url default.  You can set it to something else below.
 # UMD Customization
@@ -137,7 +139,9 @@ AppConfig[:plugins] <<  "aspace-umd-lib-handle-service"
 # Resist the urge to set this to a big number as it will affect performance
 AppConfig[:job_thread_count] = 2
 
-AppConfig[:oai_proxy_url] = 'http://your-public-oai-url.example.com'
+# UMD Customization
+AppConfig[:oai_proxy_url] = "#{ENV['OAI_PROXY_URL']}"
+# End UMD Customization
 
 AppConfig[:oai_ead_options] = {}
 # Example: AppConfig[:oai_ead_options] = { :include_daos => true, :use_numbered_c_tags => true, :include_uris => false }

@@ -83,7 +83,7 @@ RUN cd /apps/aspace && \
     scripts/plugins.sh
 
 # See archivesspace/config/config.rb for list of ports to export
-EXPOSE 8080 8081 8083
+EXPOSE 8080 8081 8082 8083
 
 # docker-startup script includes running /apps/aspace/archivesspace/scripts/setup-database.sh
 CMD ["/apps/aspace/archivesspace/docker-startup.sh"]
