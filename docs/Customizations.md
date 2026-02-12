@@ -108,20 +108,134 @@ could potentially cause unknown side effects.
 The UMD-customized plugins should provide verification steps within the
 UMD GitHub repository that manages the plugin.
 
-In this section, basic verification steps for plugins that are used "AS-IS"
-without a separate UMD GitHub repository are outlined.
+In this section, basic verification steps for plugins and other significant
+ArchivesSpace functionality that are used "AS-IS" without a separate UMD GitHub
+repository are outlined.
 
 **These steps are not intended to be an exhaustive test plan.**
 
+### Verification Steps - REST API endpoint
+
+The REST API enables clients such as
+[ArchivesSnake](https://github.com/archivesspace-labs/ArchivesSnake) to
+interact with ArchivesSpace via its API.
+
+The following steps assume that your ArchivesSpace account is configured with a
+password so that you can log in using the "Sign In" link on the ArchivesSpace
+staff interface home page, as opposed to signing in via the "UMD Log-In" link.
+You should also be either on-campus, or connected to the campus VPN.
+
+1) Set the base URL of the REST API endpoint. The following example uses the
+ArchivesSpace running in the Kubernetes "test" namespace:
+
+    ```bash
+    $ export API_BASE_URL=https://api.archives-test.lib.umd.edu
+    ```
+
+2) Run the following command:
+
+    ```bash
+    $ curl $API_BASE_URL/ping
+    ```
+
+    Verify that the response is:
+
+    ```html
+    <!DOCTYPE html><h2>api-proxy OK</h2></html>
+    ```
+
+3) Run the following command:
+
+    ```bash
+    $ curl $API_BASE_URL/
+    ```
+
+    A "403 Forbidden" response should be returned.
+
+4) Run the following command (to attempt to access the ArchivesSpace API
+"version" endpoint":
+
+    ```bash
+    $ curl $API_BASE_URL/version
+    ```
+
+    A "403 Forbidden" response should be returned.
+
+5) Log in to the ArchivesSpace API using the following command:
+
+    ```bash
+    $ curl -s -F password="<PASSWORD>" $API_BASE_URL/users/<USERNAME>/login
+    ```
+
+    where \<PASSWORD> and \<USERNAME> are your ArchivesSpace account credentials
+    (which are different from your UMD CAS login credentials). For example if
+    your username is "jsmith" and your password is "secret", the command would
+    be:
+
+    ```bash
+    curl -s -F password="secret" $API_BASE_URL/users/jsmith/login
+    ```
+
+    This should return a JSON reponse that looks like:
+
+    ```json
+    {"session":"d00a08fd5229f7b4789438079a9316192ca792a75c39def32cdba791faf06ff8","user":{ ...
+    ```
+
+    Note the "session" value.
+
+6) Run the following command:
+
+    ```bash
+    $ export SESSION=<SESSION_ID>
+    ```
+
+    where <SESSION_ID> is the session id from the previous step. For example:
+
+    ```bash
+    $ export SESSION=d00a08fd5229f7b4789438079a9316192ca792a75c39def32cdba791faf06ff8
+    ```
+
+7) Run the following command:
+
+    ```bash
+    $ curl -H "X-ArchivesSpace-Session: $SESSION" $API_BASE_URL/version
+    ```
+
+    and verify that the ArchivesSpace version, such as the following is
+    returned:
+
+    ```text
+    ArchivesSpace (v4.1.1)
+    ```
+
+8) Create a "bad" session id:
+
+    ```bash
+    $ export BAD_SESSION=ABCD
+    ```
+
+    and then run the command:
+
+    ```bash
+    $ curl -H "X-ArchivesSpace-Session: $BAD_SESSION" $API_BASE_URL/version
+    ```
+
+    and verify that the following message is returned:
+
+    ```json
+    {"code":"SESSION_GONE","error":"No session found for ABCD"}
+    ```
+
 ### Verification Steps - OAI-PMH endpoint
 
-Not actually a plugin, the OAI-PMH endpoint is stock ArchivesSpace functionality
+The OAI-PMH endpoint is stock ArchivesSpace functionality
 that enables OAI-PHM clients to interact with ArchivesSpace.
 
 The OAI-PMH interface is accessible at the "/oai" path on the public interface,
 i.e. for the ArchivesSpace test server:
 
-<https://archives-test.lib.umd.edu/oai?verb=Identify>
+<https://api.archives-test.lib.umd.edu/oai?verb=Identify>
 
 This should return an XML response similar to the following:
 
@@ -129,10 +243,10 @@ This should return an XML response similar to the following:
 <?xml version="1.0" encoding="UTF-8"?>
 <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
   <responseDate>2026-02-11T14:32:19Z</responseDate>
-  <request verb="Identify">https://archives-test.lib.umd.edu/oai</request>
+  <request verb="Identify">https://api.archives-test.lib.umd.edu/oai</request>
   <Identify>
     <repositoryName>ArchivesSpace OAI Provider</repositoryName>
-    <baseURL>https://archives-test.lib.umd.edu/oai</baseURL>
+    <baseURL>https://api.archives-test.lib.umd.edu/oai</baseURL>
     <protocolVersion>2.0</protocolVersion>
     <adminEmail>admin@example.com</adminEmail>
     <earliestDatestamp>1970-01-01T00:00:00Z</earliestDatestamp>
@@ -151,7 +265,12 @@ This should return an XML response similar to the following:
 ```
 
 The `<request verb="Identify">` and `<baseURL>` elements should reference the
-public interface URL of the server.
+REST API URL:
+
+* sandbox: `https://api.archives.sandbox.lib.umd.edu/oai`
+* test:  `https://api.archives-test.lib.umd.edu/oai`
+* qa: `https://api.archives-qa.lib.umd.edu/oai`
+* prod: `https://api.archives.lib.umd.edu/oai`
 
 ### Verification Steps - lyrasis/aspace-oauth
 
