@@ -129,7 +129,7 @@ You should also be either on-campus, or connected to the campus VPN.
 ArchivesSpace running in the Kubernetes "test" namespace:
 
     ```bash
-    $ export API_BASE_URL=https://api.archives-test.lib.umd.edu
+    $ export API_BASE_URL=https://archives-api-test.lib.umd.edu
     ```
 
 2) Run the following command:
@@ -235,7 +235,7 @@ that enables OAI-PHM clients to interact with ArchivesSpace.
 The OAI-PMH interface is accessible at the "/oai" path on the public interface,
 i.e. for the ArchivesSpace test server:
 
-<https://api.archives-test.lib.umd.edu/oai?verb=Identify>
+<https://archives-api-test.lib.umd.edu/oai?verb=Identify>
 
 This should return an XML response similar to the following:
 
@@ -243,10 +243,10 @@ This should return an XML response similar to the following:
 <?xml version="1.0" encoding="UTF-8"?>
 <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
   <responseDate>2026-02-11T14:32:19Z</responseDate>
-  <request verb="Identify">https://api.archives-test.lib.umd.edu/oai</request>
+  <request verb="Identify">https://archives-api-test.lib.umd.edu/oai</request>
   <Identify>
     <repositoryName>ArchivesSpace OAI Provider</repositoryName>
-    <baseURL>https://api.archives-test.lib.umd.edu/oai</baseURL>
+    <baseURL>https://archives-api-test.lib.umd.edu/oai</baseURL>
     <protocolVersion>2.0</protocolVersion>
     <adminEmail>admin@example.com</adminEmail>
     <earliestDatestamp>1970-01-01T00:00:00Z</earliestDatestamp>
@@ -267,10 +267,10 @@ This should return an XML response similar to the following:
 The `<request verb="Identify">` and `<baseURL>` elements should reference the
 REST API URL:
 
-* sandbox: `https://api.archives.sandbox.lib.umd.edu/oai`
-* test:  `https://api.archives-test.lib.umd.edu/oai`
-* qa: `https://api.archives-qa.lib.umd.edu/oai`
-* prod: `https://api.archives.lib.umd.edu/oai`
+* sandbox: `https://archives-api.sandbox.lib.umd.edu/oai`
+* test:  `https://archives-api-test.lib.umd.edu/oai`
+* qa: `https://archives-api-qa.lib.umd.edu/oai`
+* prod: `https://archives-api.lib.umd.edu/oai`
 
 ### Verification Steps - lyrasis/aspace-oauth
 
