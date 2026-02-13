@@ -6,7 +6,7 @@ application, and provides Dockerfiles for creating the Docker images used by the
 [umd-lib/k8s-aspace](https://github.com/umd-lib/k8s-aspace) Kubernetes
 configuration.
 
-This repository is intended to replace:
+This repository replaces:
 
 * [umd-lib/aspace-docker](https://github.com/umd-lib/aspace-docker)
 * [https://bitbucket.org/umd-lib/aspace-env](https://bitbucket.org/umd-lib/aspace-env)
@@ -33,6 +33,9 @@ customizes the stock ArchivesSpace:
 
 * [docs/Customizations.md](docs/Customizations.md)
 * [docs/DockerfileCustomizations.md](docs/DockerfileCustomizations.md)
+
+See [docs/TestPlan.md] for links to information on verifying the customizations
+provided by the UMD plugins.
 
 ## Dockerfiles
 
