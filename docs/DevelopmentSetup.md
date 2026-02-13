@@ -264,7 +264,7 @@ displayed.
 4.7) Once the job has completed, the "Amoss, William L. papers" collection
 will be published, but the other two collection will be unpublished:
 
-* Archives of the Atlantic Monthly
+* Atlantic Monthly records
 * Louis Auchincloss papers
 
 To publish these collections, for each unpublished collection:
