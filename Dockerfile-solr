@@ -17,6 +17,21 @@ ENV SOLR_MODULES=analysis-extras
 
 USER root
 
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends --only-upgrade ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+# Address the eMudhra intermediate CA key compromise: remove both affected roots
+# from the JDK's own cacerts (it doesn't use the OS store).
+RUN for alias in \
+      "cn_emsign_ecc_root_ca__g3,o_emudhra_technologies_limited,ou_emsign_pki,c_in [jdk]" \
+      "cn_aaa_certificate_services,o_comodo_ca_limited,l_salford,st_greater_manchester,c_gb [jdk]"; do \
+      if keytool -list -cacerts -storepass changeit -alias "$alias" >/dev/null 2>&1; then \
+        keytool -delete -cacerts -storepass changeit -alias "$alias"; \
+      fi; \
+    done \
+ && ! keytool -list -cacerts -storepass changeit | grep -qiE 'emsign_ecc_root_ca__g3|cn_aaa_certificate_services'
+
 RUN mkdir -p $ARCHIVESSPACE_CONFIGSET_PATH
 COPY docker_config/solr/conf/* $ARCHIVESSPACE_CONFIGSET_PATH/
 RUN chown -R solr:solr $ARCHIVESSPACE_CONFIGSET_PATH
